@@ -26,6 +26,7 @@
       background-color: #f8f9fa;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
+
     #appFrame {
       position: absolute;
       top: 0;
@@ -38,9 +39,49 @@
       display: block;
       z-index: 1;
     }
-    
-    /* MODAL VISUAL ELEGANTE QUANDO O CHROME NÃO DISPARA O PROMPT NATIVO */
-    #modalGuiaInstalacao {
+
+    /* CARD ELEGANTE FIXO NO RODAPÉ PARA DISPARAR A CRIAÇÃO DO ATALHO */
+    #bannerInstalarFlutuante {
+      position: fixed;
+      bottom: 20px;
+      left: 16px;
+      right: 16px;
+      background: #ffffff;
+      border: 2px solid #1a73e8;
+      border-radius: 18px;
+      padding: 12px 14px;
+      z-index: 2147483647;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.28);
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(60px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .btn-instalar-acao {
+      background: #1a73e8;
+      color: #ffffff;
+      border: none;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(26, 115, 232, 0.35);
+    }
+
+    .btn-instalar-acao:active {
+      transform: scale(0.95);
+    }
+
+    /* MODAL DE CONFIRMAÇÃO */
+    #modalConfirmarInstalacao {
       display: none;
       position: fixed;
       top: 0;
@@ -48,7 +89,7 @@
       width: 100%;
       height: 100%;
       background: rgba(0, 0, 0, 0.6);
-      z-index: 9999999;
+      z-index: 2147483647;
       justify-content: center;
       align-items: center;
       padding: 20px;
@@ -57,47 +98,37 @@
     .modal-box {
       background: #ffffff;
       border-radius: 20px;
-      padding: 22px 20px;
-      max-width: 360px;
+      padding: 24px 20px;
+      max-width: 340px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      animation: popIn 0.25s ease-out;
-    }
-
-    @keyframes popIn {
-      from { transform: scale(0.85); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    .btn-entendi {
-      background: #1a73e8;
-      color: #ffffff;
-      border: none;
-      font-weight: 700;
-      padding: 10px 24px;
-      border-radius: 12px;
-      font-size: 14px;
-      margin-top: 14px;
-      cursor: pointer;
-      width: 100%;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.35);
     }
   </style>
 </head>
 <body>
 
-  <!-- MODAL DE FIXAÇÃO DO ÍCONE -->
-  <div id="modalGuiaInstalacao" onclick="fecharModalGuia()">
+  <!-- CARD VISÍVEL DE 1 CLIQUE NO RODAPÉ -->
+  <div id="bannerInstalarFlutuante">
+    <img src="icone.png" alt="Liderança 1000" style="width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+    <div style="flex-grow: 1;">
+      <div style="font-weight: 700; font-size: 14px; color: #111827;">Liderança 1000</div>
+      <div style="font-size: 11px; color: #4b5563;">Adicionar ícone na tela inicial</div>
+    </div>
+    <button class="btn-instalar-acao" onclick="cliqueDiretoInstalar()">Criar Atalho</button>
+  </div>
+
+  <!-- MODAL DE CONFIRMAÇÃO CASO O NAVEGADOR EXIJA TOQUE MANUAL -->
+  <div id="modalConfirmarInstalacao" onclick="fecharModalConfirmacao()">
     <div class="modal-box" onclick="event.stopPropagation()">
-      <img src="icone.png" alt="Liderança 1000" style="width: 56px; height: 56px; border-radius: 14px; margin-bottom: 12px;">
-      <h3 style="margin: 0 0 8px 0; font-size: 17px; color: #111827; font-weight: 700;">Fixar Ícone no Celular</h3>
-      <p style="font-size: 13px; color: #4b5563; line-height: 1.5; margin: 0 0 12px 0;">
-        Toque nos <strong>3 pontinhos ⋮</strong> no canto superior direito do seu navegador e selecione:<br>
-        <span style="display: inline-block; margin-top: 8px; background: #e8f0fe; color: #1a73e8; font-weight: 700; padding: 6px 12px; border-radius: 8px;">
-          📲 "Adicionar à tela inicial"
-        </span>
+      <img src="icone.png" alt="Liderança 1000" style="width: 60px; height: 60px; border-radius: 16px; margin-bottom: 12px;">
+      <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #111827; font-weight: 700;">Criar Atalho do App</h3>
+      <p style="font-size: 13px; color: #4b5563; line-height: 1.5; margin: 0 0 16px 0;">
+        Para fixar o ícone agora:<br>
+        Toque nos <strong>3 pontinhos ⋮</strong> no topo do navegador e escolha:<br>
+        <strong style="color: #1a73e8; font-size: 14px; display: inline-block; margin-top: 6px;">"Adicionar à tela inicial"</strong>
       </p>
-      <button class="btn-entendi" onclick="fecharModalGuia()">Entendi</button>
+      <button class="btn-instalar-acao" style="width: 100%;" onclick="fecharModalConfirmacao()">Confirmar e Fechar</button>
     </div>
   </div>
 
@@ -117,30 +148,51 @@
 
     var eventoInstalacao = null;
 
-    // Captura o evento nativo do Android
+    // Se já estiver rodando pelo atalho na tela inicial, oculta o banner
+    var isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator.standalone === true);
+    if (isStandalone) {
+      var b = document.getElementById('bannerInstalarFlutuante');
+      if (b) b.style.display = 'none';
+    }
+
     window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
       eventoInstalacao = e;
-    });
-
-    // Ao clicar no botão do app
-    window.addEventListener('message', function(event) {
-      if (event.data && event.data.acao === 'instalar_pwa') {
-        if (eventoInstalacao) {
-          eventoInstalacao.prompt();
-          eventoInstalacao.userChoice.then(function() {
-            eventoInstalacao = null;
-          });
-        } else {
-          // Se o navegador já instalou ou bloqueou o pop-up automático, exibe a orientação imediata
-          document.getElementById('modalGuiaInstalacao').style.display = 'flex';
-        }
+      if (!isStandalone) {
+        document.getElementById('bannerInstalarFlutuante').style.display = 'flex';
       }
     });
 
-    function fecharModalGuia() {
-      document.getElementById('modalGuiaInstalacao').style.display = 'none';
+    window.addEventListener('appinstalled', function() {
+      var b = document.getElementById('bannerInstalarFlutuante');
+      if (b) b.style.display = 'none';
+    });
+
+    // Função com GESTO DIRETO DO USUÁRIO (exigência de segurança do Android)
+    function cliqueDiretoInstalar() {
+      if (eventoInstalacao) {
+        eventoInstalacao.prompt();
+        eventoInstalacao.userChoice.then(function(choice) {
+          if (choice.outcome === 'accepted') {
+            document.getElementById('bannerInstalarFlutuante').style.display = 'none';
+          }
+          eventoInstalacao = null;
+        });
+      } else {
+        document.getElementById('modalConfirmarInstalacao').style.display = 'flex';
+      }
     }
+
+    function fecharModalConfirmacao() {
+      document.getElementById('modalConfirmarInstalacao').style.display = 'none';
+    }
+
+    // Comunicação com o botão interno do app
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.acao === 'instalar_pwa') {
+        cliqueDiretoInstalar();
+      }
+    });
   </script>
 </body>
 </html>

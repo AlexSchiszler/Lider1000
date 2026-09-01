@@ -1,4 +1,13 @@
-﻿self.addEventListener('fetch', function(event) {
-  // Mantém o comportamento padrão de busca na rede
-  event.respondWith(fetch(event.request));
+﻿self.addEventListener('install', function(e) {
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', function(e) {
+  e.waitUntil(clients.claim());
+});
+
+self.addEventListener('fetch', function(e) {
+  e.respondWith(fetch(e.request).catch(function() {
+    return new Response('Offline');
+  }));
 });

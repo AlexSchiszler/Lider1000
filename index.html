@@ -40,99 +40,63 @@
       z-index: 1;
     }
 
-    /* CARD ELEGANTE FIXO NO RODAPÉ PARA DISPARAR A CRIAÇÃO DO ATALHO */
-    #bannerInstalarFlutuante {
+    /* BANNER DESTACADO PARA SOLICITAR A AUTORIZAÇÃO DO ÍCONE */
+    #pwaInstallBanner {
       position: fixed;
-      bottom: 20px;
+      bottom: 24px;
       left: 16px;
       right: 16px;
       background: #ffffff;
-      border: 2px solid #1a73e8;
       border-radius: 18px;
-      padding: 12px 14px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+      border: 2.5px solid #1a73e8;
+      padding: 12px 16px;
       z-index: 2147483647;
       display: flex;
       align-items: center;
-      gap: 12px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.28);
+      justify-content: space-between;
+      gap: 10px;
       animation: slideUp 0.3s ease-out;
     }
 
     @keyframes slideUp {
-      from { transform: translateY(60px); opacity: 0; }
+      from { transform: translateY(80px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
 
-    .btn-instalar-acao {
+    .btn-autorizar-icone {
       background: #1a73e8;
       color: #ffffff;
       border: none;
       font-weight: 700;
-      font-size: 14px;
-      padding: 10px 18px;
-      border-radius: 12px;
+      font-size: 13px;
+      padding: 10px 16px;
+      border-radius: 10px;
       cursor: pointer;
       white-space: nowrap;
-      box-shadow: 0 4px 12px rgba(26, 115, 232, 0.35);
+      box-shadow: 0 3px 10px rgba(26,115,232,0.35);
     }
 
-    .btn-instalar-acao:active {
+    .btn-autorizar-icone:active {
       transform: scale(0.95);
-    }
-
-    /* MODAL DE CONFIRMAÇÃO */
-    #modalConfirmarInstalacao {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 2147483647;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .modal-box {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 24px 20px;
-      max-width: 340px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 12px 35px rgba(0,0,0,0.35);
     }
   </style>
 </head>
 <body>
 
-  <!-- CARD VISÍVEL DE 1 CLIQUE NO RODAPÉ -->
-  <div id="bannerInstalarFlutuante">
-    <img src="icone.png" alt="Liderança 1000" style="width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
-    <div style="flex-grow: 1;">
-      <div style="font-weight: 700; font-size: 14px; color: #111827;">Liderança 1000</div>
-      <div style="font-size: 11px; color: #4b5563;">Adicionar ícone na tela inicial</div>
+  <!-- BANNER DE 1 TOQUE: SOLICITA A AUTORIZAÇÃO NATIVA DO ANDROID -->
+  <div id="pwaInstallBanner">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <img src="icone.png" alt="Liderança 1000" style="width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+      <div>
+        <div style="font-weight: 700; font-size: 13px; color: #111827;">Liderança 1000</div>
+        <div style="font-size: 11px; color: #6b7280;">Colocar ícone na tela inicial</div>
+      </div>
     </div>
-    <button class="btn-instalar-acao" onclick="cliqueDiretoInstalar()">Criar Atalho</button>
+    <button class="btn-autorizar-icone" onclick="acionarInstalacaoNativa()">+ Adicionar</button>
   </div>
 
-  <!-- MODAL DE CONFIRMAÇÃO CASO O NAVEGADOR EXIJA TOQUE MANUAL -->
-  <div id="modalConfirmarInstalacao" onclick="fecharModalConfirmacao()">
-    <div class="modal-box" onclick="event.stopPropagation()">
-      <img src="icone.png" alt="Liderança 1000" style="width: 60px; height: 60px; border-radius: 16px; margin-bottom: 12px;">
-      <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #111827; font-weight: 700;">Criar Atalho do App</h3>
-      <p style="font-size: 13px; color: #4b5563; line-height: 1.5; margin: 0 0 16px 0;">
-        Para fixar o ícone agora:<br>
-        Toque nos <strong>3 pontinhos ⋮</strong> no topo do navegador e escolha:<br>
-        <strong style="color: #1a73e8; font-size: 14px; display: inline-block; margin-top: 6px;">"Adicionar à tela inicial"</strong>
-      </p>
-      <button class="btn-instalar-acao" style="width: 100%;" onclick="fecharModalConfirmacao()">Confirmar e Fechar</button>
-    </div>
-  </div>
-
-  <!-- APLICATIVO NATIVO EM TELA CHEIA -->
+  <!-- APLICATIVO EM TELA CHEIA -->
   <iframe 
     id="appFrame" 
     src="https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec" 
@@ -146,53 +110,38 @@
       });
     }
 
-    var eventoInstalacao = null;
+    var deferredPrompt = null;
 
-    // Se já estiver rodando pelo atalho na tela inicial, oculta o banner
-    var isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator.standalone === true);
-    if (isStandalone) {
-      var b = document.getElementById('bannerInstalarFlutuante');
-      if (b) b.style.display = 'none';
-    }
-
+    // Captura o evento nativo do Android
     window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
-      eventoInstalacao = e;
-      if (!isStandalone) {
-        document.getElementById('bannerInstalarFlutuante').style.display = 'flex';
-      }
+      deferredPrompt = e;
+      var banner = document.getElementById('pwaInstallBanner');
+      if (banner) banner.style.display = 'flex';
     });
 
     window.addEventListener('appinstalled', function() {
-      var b = document.getElementById('bannerInstalarFlutuante');
-      if (b) b.style.display = 'none';
+      var banner = document.getElementById('pwaInstallBanner');
+      if (banner) banner.style.display = 'none';
+      deferredPrompt = null;
     });
 
-    // Função com GESTO DIRETO DO USUÁRIO (exigência de segurança do Android)
-    function cliqueDiretoInstalar() {
-      if (eventoInstalacao) {
-        eventoInstalacao.prompt();
-        eventoInstalacao.userChoice.then(function(choice) {
-          if (choice.outcome === 'accepted') {
-            document.getElementById('bannerInstalarFlutuante').style.display = 'none';
+    // Dispara a janela nativa de autorização do Android
+    function acionarInstalacaoNativa() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function(choiceResult) {
+          if (choiceResult.outcome === 'accepted') {
+            var banner = document.getElementById('pwaInstallBanner');
+            if (banner) banner.style.display = 'none';
           }
-          eventoInstalacao = null;
+          deferredPrompt = null;
         });
       } else {
-        document.getElementById('modalConfirmarInstalacao').style.display = 'flex';
+        // Caso o Chrome já tenha o app registrado em segundo plano
+        alert('Solicitação enviada ao sistema! Se a janela de confirmação não abriu, o ícone já foi criado na lista de aplicativos do seu celular.');
       }
     }
-
-    function fecharModalConfirmacao() {
-      document.getElementById('modalConfirmarInstalacao').style.display = 'none';
-    }
-
-    // Comunicação com o botão interno do app
-    window.addEventListener('message', function(event) {
-      if (event.data && event.data.acao === 'instalar_pwa') {
-        cliqueDiretoInstalar();
-      }
-    });
   </script>
 </body>
 </html>

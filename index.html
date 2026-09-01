@@ -58,23 +58,20 @@
 
     var eventoInstalacao = null;
 
+    // Captura o evento nativo do Android para fixar na tela inicial
     window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
       eventoInstalacao = e;
     });
 
+    // Ao receber o clique do botão interno do app, dispara imediatamente o prompt do sistema Android
     window.addEventListener('message', function(event) {
       if (event.data && event.data.acao === 'instalar_pwa') {
         if (eventoInstalacao) {
           eventoInstalacao.prompt();
-          eventoInstalacao = null;
-        } else {
-          var isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-          if (isIos) {
-            alert('No iPhone: toque no ícone de Compartilhar (no rodapé do Safari) e selecione "Adicionar à Tela de Início".');
-          } else {
-            alert('Para fixar o ícone na tela inicial:\n\n1. Toque nos 3 pontinhos ⋮ no topo direito do navegador.\n2. Selecione "Adicionar à tela inicial" ou "Instalar aplicativo".');
-          }
+          eventoInstalacao.userChoice.then(function() {
+            eventoInstalacao = null;
+          });
         }
       }
     });

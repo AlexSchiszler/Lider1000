@@ -4,17 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Liderança 1000</title>
-  
-  <!-- PWA & Mobile Web App Tags -->
+
+  <!-- Link para o Manifest -->
   <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Liderança 1000">
-  <meta name="application-name" content="Liderança 1000">
-  <meta name="theme-color" content="#1a73e8">
-  <link rel="icon" type="image/png" href="icon.png">
-  <link rel="apple-touch-icon" href="icon.png">
+  <meta name="apple-mobile-web-app-title" content="Lider1000">
+  <link rel="icon" type="image/png" href="icone.png">
+  <link rel="apple-touch-icon" href="icone.png">
+
+  <!-- Registro do Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
+  </script>
 
   <style>
     html, body {
@@ -42,19 +48,12 @@
 </head>
 <body>
 
-  <!-- APLICATIVO NATIVO EM TELA CHEIA (SEM AVISOS DO GOOGLE) -->
+  <!-- APLICATIVO EM TELA CHEIA LIMPA (SEM AVISOS DO GOOGLE) -->
   <iframe 
     id="appFrame" 
     src="https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec" 
     allow="geolocation; camera; microphone; clipboard-read; clipboard-write;">
   </iframe>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sw.js').catch(function(){});
-      });
-    }
-  </script>
 </body>
 </html>

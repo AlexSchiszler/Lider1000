@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lider1000-v6-install';
+const CACHE_NAME = 'lider1000-v8-live';
 const ASSETS = [
   './',
   './index.html',
@@ -13,12 +13,12 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (e) => {
+  self.skipWaiting();
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS).catch(() => {});
     })
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
@@ -34,28 +34,40 @@ self.addEventListener('activate', (e) => {
   return self.clients.claim();
 });
 
+// ESTRATÉGIA NETWORK-FIRST: Busca sempre o mais recente da internet. Se estiver sem sinal, usa o cache local!
 self.addEventListener('fetch', (e) => {
   if (e.request.url.includes('script.google.com')) {
     return;
   }
-  
+
+  // Para navegação / páginas HTML: tenta rede primeiro, se offline usa cache
+  if (e.request.mode === 'navigate' || e.request.destination === 'document') {
+    e.respondWith(
+      fetch(e.request).then((networkResponse) => {
+        const resClone = networkResponse.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(e.request, resClone);
+        });
+        return networkResponse;
+      }).catch(() => {
+        return caches.match('./index.html') || caches.match('./');
+      })
+    );
+    return;
+  }
+
+  // Para outros recursos estáticos: cache com fallback para rede
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
+      if (cachedResponse) return cachedResponse;
       return fetch(e.request).then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-          const responseToCache = networkResponse.clone();
+          const resClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put(e.request, responseToCache);
+            cache.put(e.request, resClone);
           });
         }
         return networkResponse;
-      }).catch(() => {
-        if (e.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
       });
     })
   );

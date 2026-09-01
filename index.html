@@ -1,12 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Liderança 1000</title>
+  <title>Liderança 1000 - Portal do Líder</title>
 
-  <!-- PWA Manifest & Meta Tags -->
-  <link rel="manifest" href="manifest.json?v=3">
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1a73e8">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,47 +15,1318 @@
   <link rel="icon" type="image/png" href="icone.png">
   <link rel="apple-touch-icon" href="icone.png">
 
+  <!-- Bootstrap 5 CSS & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f0f4f9;
+      color: #1f2937;
+      min-height: 100vh;
+      padding-bottom: 30px;
+    }
+    .header-banner {
+      background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+      color: #ffffff;
+      padding: 18px 16px;
+      border-bottom-left-radius: 22px;
+      border-bottom-right-radius: 22px;
+      box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
+      margin-bottom: 18px;
+    }
+    .main-container {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+    .form-card {
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+      margin-bottom: 16px;
+      border: 1px solid #e5e7eb;
+    }
+    .form-label {
+      font-weight: 600;
+      font-size: 14px;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+    .form-control, .form-select {
+      border-radius: 10px;
+      padding: 12px 14px;
+      border: 1px solid #d1d5db;
+      font-size: 15px;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    }
+    .btn-submit {
       width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #f8f9fa;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 14px;
+      font-weight: 600;
+      border-radius: 10px;
+      font-size: 15px;
+      background-color: #0d6efd;
+      color: #ffffff;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-submit:hover {
+      background-color: #0b5ed7;
+      color: #ffffff;
+    }
+    .btn-submit:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
+    .badge-required {
+      color: #dc3545;
+      font-weight: bold;
+    }
+    .user-badge {
+      background-color: #e8f0fe;
+      border: 1px solid #c2e7ff;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 13px;
     }
 
-    #appFrame {
+    /* CAIXA DE SUGESTÕES DE BAIRROS E CIDADES OTIMIZADA */
+    .suggestions-box {
       position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
-      height: 100%;
-      border: none;
-      margin: 0;
-      padding: 0;
-      display: block;
-      z-index: 1;
+      max-height: 260px;
+      overflow-y: auto;
+      background: #ffffff;
+      border: 2px solid #0d6efd;
+      border-top: none;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      z-index: 1050;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+      display: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .suggestion-item {
+      padding: 14px 16px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #1f2937;
+      cursor: pointer;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      user-select: none;
+      -webkit-tap-highlight-color: rgba(13, 110, 253, 0.15);
+    }
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
+    .suggestion-item:hover, .suggestion-item:active {
+      background-color: #eff6ff;
+      color: #0d6efd;
+    }
+
+    .nav-pills .nav-link {
+      color: #4b5563;
+      font-weight: 600;
+      font-size: 13px;
+      border-radius: 10px;
+      padding: 8px 12px;
+    }
+    .nav-pills .nav-link.active {
+      background-color: #0d6efd;
+      color: #ffffff;
+    }
+    .card-historico {
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      border-left: 4px solid #cbd5e1;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-left-width: 4px;
+    }
+    .card-sabado {
+      border-left-color: #eab308 !important;
+      background-color: #fefce8;
+    }
+    .card-domingo {
+      border-left-color: #ef4444 !important;
+      background-color: #fef2f2;
+    }
+    .card-offline-pendente {
+      border-left-color: #f59e0b !important;
+      background-color: #fffbeb;
+      border: 1.5px dashed #f59e0b;
+      border-left-width: 4px;
+    }
+    .badge-sabado {
+      background-color: #fef08a;
+      color: #854d0e;
+    }
+    .badge-domingo {
+      background-color: #fecaca;
+      color: #991b1b;
+    }
+    .badge-normal {
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+    .badge-status-rede {
+      font-size: 11px;
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
   </style>
 </head>
 <body>
 
-  <!-- APLICATIVO NATIVO EM TELA CHEIA LIMPA (SEM NENHUM BANNER) -->
-  <iframe 
-    id="appFrame" 
-    src="https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec" 
-    allow="geolocation; camera; microphone; clipboard-read; clipboard-write;">
-  </iframe>
+  <!-- CABEÇALHO COM STATUS DE CONEXÃO -->
+  <div class="header-banner">
+    <div class="d-flex justify-content-between align-items-center mb-1">
+      <h4 class="fw-bold mb-0 text-start"><i class="bi bi-geo-alt-fill me-1"></i>Campanha Oficial SP</h4>
+      <div id="badgeStatusRede" class="badge-status-rede bg-success text-white shadow-sm">
+        <i class="bi bi-wifi"></i> <span>Online</span>
+      </div>
+    </div>
+    <p class="mb-0 small text-white-50 text-start">Liderança 1000 &bull; Portal Territorial</p>
+  </div>
+
+  <div class="main-container">
+    
+    <!-- ALERTAS GERAIS -->
+    <div id="alertaErro" class="alert alert-danger alert-dismissible fade show d-none" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i><span id="msgErro"></span>
+    </div>
+    <div id="alertaSucesso" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+      <i class="bi bi-check-circle-fill me-2"></i><span id="msgSucesso"></span>
+    </div>
+
+    <!-- TELA 1: IDENTIFICAÇÃO POR TELEFONE (LOGIN) -->
+    <div id="secaoLogin" class="form-card">
+      <h5 class="fw-bold mb-2"><i class="bi bi-phone-vibrate-fill me-2 text-primary"></i>Acesso do Líder</h5>
+      <p class="text-muted small mb-3">Digite seu número de WhatsApp com DDD para acessar seu painel.</p>
+
+      <form id="formLogin" onsubmit="processarIdentificacao(event)">
+        <div class="mb-3">
+          <label class="form-label">Telefone / WhatsApp <span class="badge-required">*</span></label>
+          <input type="tel" class="form-control form-control-lg" id="login_telefone" placeholder="(11) 99999-9999" required>
+        </div>
+        <button type="submit" class="btn-submit" id="btnAvancarLogin">
+          <span id="btnTxtLogin"><i class="bi bi-arrow-right-circle me-2"></i>Acessar Painel</span>
+          <span id="btnSpinLogin" class="spinner-border spinner-border-sm d-none"></span>
+        </button>
+      </form>
+    </div>
+
+    <!-- TELA 2: PRIMEIRO CADASTRO DE LÍDER -->
+    <div id="secaoPrimeiroCadastro" class="form-card" style="display: none;">
+      <h5 class="fw-bold mb-2 text-primary"><i class="bi bi-person-plus-fill me-2"></i>Primeiro Cadastro de Líder</h5>
+      <p class="text-muted small mb-3">Identificamos que é o seu primeiro acesso. Preencha seus dados para liberar seu painel.</p>
+
+      <form id="formPrimeiroCadastro" onsubmit="salvarPrimeiroCadastro(event)">
+        <div class="mb-3">
+          <label class="form-label">Nome Completo do Líder <span class="badge-required">*</span></label>
+          <input type="text" class="form-control" id="cad_nome" placeholder="Ex: João da Silva" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Telefone / WhatsApp <span class="badge-required">*</span></label>
+          <input type="tel" class="form-control" id="cad_telefone" readonly required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">E-mail (Opcional)</label>
+          <input type="email" class="form-control" id="cad_email" placeholder="seuemail@exemplo.com">
+        </div>
+        <div class="mb-3 position-relative">
+          <label class="form-label">Cidade Atual de Atuação (SP) <span class="badge-required">*</span></label>
+          <input type="text" class="form-control" id="cad_cidade" placeholder="Digite as primeiras letras..." autocomplete="off" required oninput="filtrarCidadesIBGE(this.value, 'cad_cidades_sugestoes', 'cad_cidade')">
+          <div id="cad_cidades_sugestoes" class="suggestions-box"></div>
+          <small class="text-muted" style="font-size: 11px;"><i class="bi bi-bank text-primary me-1"></i>Base oficial de municípios de SP.</small>
+        </div>
+        <div class="mb-4">
+          <label class="form-label">Data de Início nesta Cidade <span class="badge-required">*</span></label>
+          <input type="date" class="form-control" id="cad_dataInicio" required>
+        </div>
+        <button type="submit" class="btn-submit" id="btnSalvarNovoLider">
+          <span id="btnTxtNovoLider"><i class="bi bi-check-circle-fill me-2"></i>Concluir Cadastro</span>
+          <span id="btnSpinNovoLider" class="spinner-border spinner-border-sm d-none"></span>
+        </button>
+      </form>
+    </div>
+
+    <!-- TELA 3: PAINEL SEGURO DO LÍDER -->
+    <div id="secaoPainelLider" style="display: none;">
+      
+      <!-- CARTÃO DO LÍDER -->
+      <div class="user-badge d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <i class="bi bi-person-check-fill me-1 text-primary"></i> Líder: <strong id="lblNomeLider"></strong><br>
+          <small class="text-muted"><i class="bi bi-whatsapp me-1"></i><span id="lblTelefoneLider"></span></small>
+        </div>
+        <div class="text-end d-flex flex-column align-items-end gap-1">
+          <button type="button" class="btn btn-sm btn-outline-secondary py-1 px-2 d-flex align-items-center gap-1 shadow-sm" style="font-size: 11px; border-radius: 6px; background-color: #ffffff;" onclick="fazerLogoutLider()" title="Sair da sessão">
+            <i class="bi bi-box-arrow-right text-danger"></i> <span class="fw-semibold text-dark">Sair</span>
+          </button>
+          <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-0" style="font-size: 10px;">
+            <i class="bi bi-shield-lock-fill me-1"></i>Aparelho Vinculado
+          </span>
+        </div>
+      </div>
+
+      <!-- GUIAS DE NAVEGAÇÃO -->
+      <ul class="nav nav-pills nav-fill mb-3">
+        <li class="nav-item">
+          <button class="nav-link active" id="tabRelatorio" onclick="trocarAbaPainel('relatorio')">
+            <i class="bi bi-journal-check me-1"></i> Relatório Diário
+          </button>
+        </li>
+        <li class="nav-item position-relative">
+          <button class="nav-link" id="tabHistorico" onclick="trocarAbaPainel('historico')">
+            <i class="bi bi-clock-history me-1"></i> Histórico
+            <span id="badgeQtdOfflinePendente" class="badge rounded-pill bg-warning text-dark d-none" style="font-size: 10px; margin-left: 4px;">0</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" id="tabTrocaCidade" onclick="trocarAbaPainel('trocaCidade')">
+            <i class="bi bi-geo-alt-fill me-1"></i> Nova Cidade
+          </button>
+        </li>
+      </ul>
+
+      <!-- GUIA 1: RELATÓRIO DIÁRIO -->
+      <div id="painelRelatorioContainer" class="form-card">
+        <h5 class="fw-bold mb-3 text-success"><i class="bi bi-clipboard2-check-fill me-2"></i>Relatório Diário de Campo</h5>
+        <form id="formRelatorio" onsubmit="enviarRelatorio(event)">
+          
+          <div class="mb-3">
+            <label class="form-label">Data Trabalhada <span class="badge-required">*</span></label>
+            <input type="date" class="form-control" id="rel_dataTrabalho" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Cidade de Atuação <span class="badge-required">*</span></label>
+            <select class="form-select" id="rel_cidade_select" required onchange="ativarCidadeNoCelular(this.value)">
+            </select>
+          </div>
+
+          <div class="mb-3 position-relative">
+            <label class="form-label">Bairro / Loteamento Trabalhado <span class="badge-required">*</span></label>
+            <input type="text" class="form-control" id="rel_bairros" placeholder="Clique ou digite (ex: Centro, Vila Natal...)" autocomplete="off" required oninput="filtrarBairrosGov(this.value)" onfocus="filtrarBairrosGov(this.value)" onclick="filtrarBairrosGov(this.value)">
+            <div id="rel_bairros_sugestoes" class="suggestions-box"></div>
+            <small class="text-muted" style="font-size: 11px;"><i class="bi bi-search text-primary me-1"></i>Exibe apenas bairros/distritos oficiais da cidade selecionada.</small>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Descrição das Atividades Executadas <span class="badge-required">*</span></label>
+            <textarea class="form-control" id="rel_descricao" rows="4" placeholder="Descreva as reuniões, visitas, contatos e caminhadas realizadas hoje..." required></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit" style="background-color: #198754;" id="btnEnviarRelatorio">
+            <span id="btnTxtRelatorio"><i class="bi bi-send-fill me-2"></i>Enviar Relatório Diário</span>
+            <span id="btnSpinRelatorio" class="spinner-border spinner-border-sm d-none"></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- GUIA 2: HISTÓRICO -->
+      <div id="painelHistoricoContainer" class="form-card" style="display: none;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0 text-primary"><i class="bi bi-calendar-week-fill me-2"></i>Seu Histórico</h5>
+          <button class="btn btn-sm btn-outline-primary" onclick="carregarHistoricoTrabalho()"><i class="bi bi-arrow-clockwise"></i> Atualizar</button>
+        </div>
+
+        <div class="d-flex gap-2 mb-3 flex-wrap">
+          <span class="badge badge-sabado px-2 py-1"><i class="bi bi-brightness-high-fill me-1"></i>Sábado</span>
+          <span class="badge badge-domingo px-2 py-1"><i class="bi bi-sun-fill me-1"></i>Domingo</span>
+          <span class="badge badge-normal px-2 py-1"><i class="bi bi-calendar-event me-1"></i>Dias Úteis</span>
+        </div>
+
+        <div id="historicoLoading" class="text-center py-4" style="display: none;">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="text-muted small mt-2">Carregando seu histórico...</p>
+        </div>
+
+        <div id="historicoLista"></div>
+      </div>
+
+      <!-- GUIA 3: ATIVAR NOVA CIDADE -->
+      <div id="painelTrocaCidadeContainer" class="form-card" style="display: none;">
+        <h5 class="fw-bold mb-2 text-primary"><i class="bi bi-pin-map-fill me-2"></i>Adicionar Nova Cidade</h5>
+        <p class="text-muted small mb-3">Se você começou a atuar em outro município, cadastre-o abaixo:</p>
+
+        <div class="mb-3">
+          <label class="form-label">Cidades onde você já atua:</label>
+          <div id="listaCidadesAtuaisLider" class="d-flex flex-wrap gap-2 mb-3"></div>
+        </div>
+
+        <form id="formNovaCidade" onsubmit="enviarNovaCidade(event)">
+          <div class="mb-3 position-relative">
+            <label class="form-label">Nova Cidade de Atuação (SP) <span class="badge-required">*</span></label>
+            <input type="text" class="form-control" id="tc_cidade" placeholder="Digite as primeiras letras..." autocomplete="off" required oninput="filtrarCidadesIBGE(this.value, 'tc_cidades_sugestoes', 'tc_cidade')">
+            <div id="tc_cidades_sugestoes" class="suggestions-box"></div>
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Data de Início nesta Cidade <span class="badge-required">*</span></label>
+            <input type="date" class="form-control" id="tc_dataInicio" required>
+          </div>
+          <button type="submit" class="btn-submit" id="btnSalvarNovaCidade">
+            <span id="btnTxtNovaCidade"><i class="bi bi-plus-circle-fill me-2"></i>Ativar Esta Cidade</span>
+            <span id="btnSpinNovaCidade" class="spinner-border spinner-border-sm d-none"></span>
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+    <!-- RODAPÉ & LINK LGPD -->
+    <div class="text-center my-4">
+      <div class="mb-1">
+        <a href="javascript:void(0)" onclick="abrirModalPrivacidadeConsulta()" class="text-decoration-none text-muted small fw-semibold">
+          <i class="bi bi-shield-check text-success me-1"></i>Políticas de Privacidade e Proteção de Dados (LGPD)
+        </a>
+      </div>
+      <small class="text-muted">&copy; Campanha Política 2026 &bull; Coordenação Geral de Mobilização</small>
+    </div>
+
+  </div>
+
+  <!-- MODAL LGPD -->
+  <div class="modal fade" id="modalPrivacidade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius: 16px;">
+        <div class="modal-header bg-light">
+          <h6 class="modal-title fw-bold text-dark d-flex align-items-center">
+            <i class="bi bi-shield-lock-fill text-primary me-2 fs-5"></i>
+            Privacidade e Proteção de Dados (LGPD)
+          </h6>
+          <button type="button" class="btn-close" id="modalBtnFecharX" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+        <div class="modal-body p-4" style="font-size: 13px; line-height: 1.6; color: #374151;">
+          <p>Este aplicativo opera em total conformidade com a <strong>Lei nº 13.709/2018 (LGPD)</strong>.</p>
+          <ul class="ps-3 mb-3">
+            <li><strong>Finalidade:</strong> Coleta e acompanhamento das atividades de campo da liderança.</li>
+            <li><strong>Sigilo:</strong> Seus dados não serão vendidos nem repassados a terceiros.</li>
+            <li><strong>Segurança:</strong> Armazenamento seguro na nuvem com criptografia de ponta a ponta.</li>
+          </ul>
+        </div>
+        <div class="modal-footer bg-light py-2" id="modalFooterConsulta">
+          <button type="button" class="btn btn-sm btn-primary px-4 fw-semibold" data-bs-dismiss="modal">Fechar</button>
+        </div>
+        <div class="modal-footer bg-light py-3 d-flex justify-content-between align-items-center" id="modalFooterAceite" style="display: none;">
+          <button type="button" class="btn btn-sm btn-outline-secondary px-3" onclick="recusarTermosCadastro()">Voltar</button>
+          <button type="button" class="btn btn-sm btn-success px-4 fw-bold" onclick="aceitarTermosCadastro()">
+            <i class="bi bi-check2-circle me-1"></i> Li e Concordo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    // ENDPOINT OFICIAL DO GOOGLE APPS SCRIPT
+    var API_URL = "https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec";
+
+    // REGISTRO DO SERVICE WORKER NATIVO
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=3').catch(function(){});
+        navigator.serviceWorker.register('./sw.js').catch(function(){});
       });
     }
+
+    var listaCidadesIBGE = ["Adamantina", "Adolfo", "Aguaí", "Águas da Prata", "Águas de Lindóia", "Águas de Santa Bárbara", "Águas de São Pedro", "Agudos", "Alambari", "Alfredo Marcondes", "Altair", "Altinópolis", "Alto Alegre", "Alumínio", "Álvares Florence", "Álvares Machado", "Álvaro de Carvalho", "Alvinlândia", "Americana", "Américo Brasiliense", "Américo de Campos", "Amparo", "Analândia", "Andradina", "Angatuba", "Anhembi", "Anhumas", "Aparecida", "Aparecida d'Oeste", "Apiaí", "Araçariguama", "Araçatuba", "Araçoiaba da Serra", "Aramina", "Arandu", "Arapeí", "Araraquara", "Araras", "Arco-Íris", "Arealva", "Areias", "Areiópolis", "Ariranha", "Artur Nogueira", "Arujá", "Aspásia", "Assis", "Atibaia", "Auriflama", "Avaí", "Avanhandava", "Avaré", "Bady Bassitt", "Balbinos", "Bálsamo", "Bananal", "Barão de Antonina", "Barbosa", "Bariri", "Barra Bonita", "Barra do Chapéu", "Barra do Turvo", "Barretos", "Barrinha", "Barueri", "Bastos", "Batatais", "Bauru", "Bebedouro", "Bento de Abreu", "Bernardino de Campos", "Bertioga", "Bilac", "Birigui", "Biritiba Mirim", "Boa Esperança do Sul", "Bocaina", "Bofete", "Boituva", "Bom Jesus dos Perdões", "Bom Sucesso de Itararé", "Borá", "Boracéia", "Borborema", "Borebi", "Botucatu", "Bragança Paulista", "Braúna", "Brejo Alegre", "Brodowski", "Brotas", "Buri", "Buritama", "Buritizal", "Cabrália Paulista", "Cabreúva", "Caçapava", "Cachoeira Paulista", "Caconde", "Cafelândia", "Caiabu", "Caieiras", "Caiuá", "Cajamar", "Cajati", "Cajobi", "Cajuru", "Campina do Monte Alegre", "Campinas", "Campo Limpo Paulista", "Campos do Jordão", "Campos Novos Paulista", "Cananéia", "Canas", "Cândido Mota", "Cândido Rodrigues", "Canitar", "Capão Bonito", "Capela do Alto", "Capivari", "Caraguatatuba", "Carapicuíba", "Cardoso", "Casa Branca", "Cássia dos Coqueiros", "Castilho", "Catanduva", "Catiguá", "Cedral", "Cerqueira César", "Cerquilho", "Cesário Lange", "Charqueada", "Chavantes", "Clementina", "Colina", "Colômbia", "Conchal", "Conchas", "Cordeirópolis", "Coroados", "Coronel Macedo", "Corumbataí", "Cosmópolis", "Cosmorama", "Cotia", "Cravinhos", "Cristais Paulista", "Cruzália", "Cruzeiro", "Cubatão", "Cunha", "Descalvado", "Diadema", "Dirce Reis", "Divinolândia", "Dobrada", "Dois Córregos", "Dolcinópolis", "Dourado", "Dracena", "Duartina", "Dumont", "Echaporã", "Eldorado", "Elias Fausto", "Elisiário", "Embaúba", "Embu das Artes", "Embu-Guaçu", "Emilianópolis", "Engenheiro Coelho", "Espírito Santo do Pinhal", "Espírito Santo do Turvo", "Estiva Gerbi", "Estrela d'Oeste", "Estrela do Norte", "Euclides da Cunha Paulista", "Fartura", "Fernando Prestes", "Fernandópolis", "Fernão", "Ferraz de Vasconcelos", "Flora Rica", "Floreal", "Flórida Paulista", "Florínea", "Franca", "Francisco Morato", "Franco da Rocha", "Gabriel Monteiro", "Gália", "Garça", "Gastão Vidigal", "Gavião Peixoto", "General Salgado", "Getulina", "Glicério", "Guaiçara", "Guaimbê", "Guaíra", "Guapiaçu", "Guapiara", "Guará", "Guaraçaí", "Guaraci", "Guarani d'Oeste", "Guarantã", "Guararapes", "Guararema", "Guaratinguetá", "Guareí", "Guariba", "Guarujá", "Guarulhos", "Guatapará", "Guzolândia", "Herculândia", "Holambra", "Hortolândia", "Iacanga", "Iacri", "Iaras", "Ibaté", "Ibirá", "Ibirarema", "Ibitinga", "Ibiúna", "Icém", "Iepê", "Igaraçu do Tietê", "Igarapava", "Igaratá", "Iguape", "Ilha Comprida", "Ilha Solteira", "Ilhabela", "Indaiatuba", "Indiana", "Indiaporã", "Inúbia Paulista", "Ipaussu", "Iperó", "Ipeúna", "Ipiguá", "Iporanga", "Ipuã", "Iracemápolis", "Irapuã", "Irapuru", "Itaberá", "Itaí", "Itajobi", "Itaju", "Itanhaém", "Itaóca", "Itapecerica da Serra", "Itapetininga", "Itapeva", "Itapevi", "Itapira", "Itapirapuã Paulista", "Itápolis", "Itaporanga", "Itapuí", "Itapura", "Itaquaquecetuba", "Itararé", "Itariri", "Itatiba", "Itatinga", "Itirapina", "Itirapuã", "Itobi", "Itu", "Itupeva", "Ituverava", "Jaborandi", "Jaboticabal", "Jacareí", "Jaci", "Jacupiranga", "Jaguariúna", "Jales", "Jambeiro", "Jandira", "Jardinópolis", "Jarinu", "Jaú", "Jeriquara", "Joanópolis", "João Ramalho", "José Bonifácio", "Júlio Mesquita", "Jumirim", "Jundiaí", "Junqueirópolis", "Juquiá", "Juquitiba", "Lagoinha", "Laranjal Paulista", "Lavínia", "Lavrinhas", "Leme", "Lençóis Paulista", "Limeira", "Lindóia", "Lins", "Lorena", "Lourdes", "Louveira", "Lucélia", "Lucianópolis", "Luís Antônio", "Luiziânia", "Lupércio", "Lutécia", "Macatuba", "Macaubal", "Macedônia", "Magda", "Mairinque", "Mairiporã", "Manduri", "Marabá Paulista", "Maracaí", "Marapoama", "Mariápolis", "Marília", "Marinópolis", "Martinópolis", "Matão", "Mauá", "Mendonça", "Meridiano", "Mesópolis", "Miguelópolis", "Mineiros do Tietê", "Mira Estrela", "Miracatu", "Mirandópolis", "Mirante do Paranapanema", "Mirassol", "Mirassolândia", "Mococa", "Mogi das Cruzes", "Mogi Guaçu", "Mogi Mirim", "Mombuca", "Monções", "Mongaguá", "Monte Alegre do Sul", "Monte Alto", "Monte Aprazível", "Monte Azul Paulista", "Monte Castelo", "Monte Mor", "Monteiro Lobato", "Morro Agudo", "Morungaba", "Motuca", "Murutinga do Sul", "Nantes", "Narandiba", "Natividade da Serra", "Nazaré Paulista", "Neves Paulista", "Nhandeara", "Nipoã", "Nova Aliança", "Nova Campina", "Nova Canaã Paulista", "Nova Castilho", "Nova Europa", "Nova Granada", "Nova Guataporanga", "Nova Independência", "Nova Luzitânia", "Nova Odessa", "Novais", "Novo Horizonte", "Nuporanga", "Ocauçu", "Óleo", "Olímpia", "Onda Verde", "Oriente", "Orindiúva", "Orlândia", "Osasco", "Oscar Bressane", "Osvaldo Cruz", "Ourinhos", "Ouro Verde", "Ouroeste", "Pacaembu", "Palestina", "Palmares Paulista", "Palmeira d'Oeste", "Palmital", "Panorama", "Paraguaçu Paulista", "Paraibuna", "Paraíso", "Paranapanema", "Paranapuã", "Parapuã", "Pardinho", "Pariquera-Açu", "Parisi", "Patrocínio Paulista", "Paulicéia", "Paulínia", "Paulistânia", "Paulo de Faria", "Pederneiras", "Pedra Bela", "Pedranópolis", "Pedregulho", "Pedreira", "Pedrinhas Paulista", "Pedro de Toledo", "Penápolis", "Pereira Barreto", "Pereiras", "Peruíbe", "Piacatu", "Piedade", "Pilar do Sul", "Pindamonhangaba", "Pindorama", "Pinhalzinho", "Piquerobi", "Piquete", "Piracaia", "Piracicaba", "Piraju", "Pirajuí", "Pirangi", "Pirapora do Bom Jesus", "Pirapozinho", "Pirassununga", "Piratininga", "Pitangueiras", "Planalto", "Platina", "Poá", "Poloni", "Pompéia", "Pongaí", "Pontal", "Pontalinda", "Pontes Gestal", "Populina", "Porangaba", "Porto Feliz", "Porto Ferreira", "Potim", "Potirendaba", "Pracinha", "Pradópolis", "Praia Grande", "Pratânia", "Presidente Alves", "Presidente Bernardes", "Presidente Epitácio", "Presidente Prudente", "Presidente Venceslau", "Promissão", "Quadra", "Quatá", "Queiroz", "Queluz", "Quintana", "Rafard", "Rancharia", "Redenção da Serra", "Regente Feijó", "Reginópolis", "Registro", "Restinga", "Ribeira", "Ribeirão Bonito", "Ribeirão Branco", "Ribeirão Corrente", "Ribeirão do Sul", "Ribeirão dos Índios", "Ribeirão Grande", "Ribeirão Pires", "Ribeirão Preto", "Rifaina", "Rincão", "Rinópolis", "Rio Claro", "Rio das Pedras", "Rio Grande da Serra", "Riolândia", "Riversul", "Rosana", "Roseira", "Rubiácea", "Rubinéia", "Sabino", "Sagres", "Sales", "Sales Oliveira", "Salesópolis", "Salmourão", "Saltinho", "Salto", "Salto de Pirapora", "Salto Grande", "Sandovalina", "Santa Adélia", "Santa Albertina", "Santa Bárbara d'Oeste", "Santa Branca", "Santa Clara d'Oeste", "Santa Cruz da Conceição", "Santa Cruz da Esperança", "Santa Cruz das Palmeiras", "Santa Cruz do Rio Pardo", "Santa Ernestina", "Santa Fé do Sul", "Santa Gertrudes", "Santa Isabel", "Santa Lúcia", "Santa Maria da Serra", "Santa Mercedes", "Santa Rita d'Oeste", "Santa Rita do Passa Quatro", "Santa Rosa de Viterbo", "Santa Salete", "Santana da Ponte Pensa", "Santana de Parnaíba", "Santo Anastácio", "Santo André", "Santo Antônio da Alegria", "Santo Antônio de Posse", "Santo Antônio do Aracanguá", "Santo Antônio do Jardim", "Santo Antônio do Pinhal", "Santo Expedito", "Santópolis do Aguapeí", "Santos", "São Bento do Sapucaí", "São Bernardo do Campo", "São Caetano do Sul", "São Carlos", "São Francisco", "São João da Boa Vista", "São João das Duas Pontes", "São João de Iracema", "São João do Pau d'Alho", "São Joaquim da Barra", "São José da Bela Vista", "São José do Barreiro", "São José do Rio Pardo", "São José do Rio Preto", "São José dos Campos", "São Lourenço da Serra", "São Luíz do Paraitinga", "São Manuel", "São Miguel Arcanjo", "São Paulo", "São Pedro", "São Pedro do Turvo", "São Roque", "São Sebastião", "São Sebastião da Grama", "São Simão", "São Vicente", "Sarapuí", "Sarutaiá", "Sebastianópolis do Sul", "Serra Azul", "Serra Negra", "Serrana", "Sertãozinho", "Sete Barras", "Severínia", "Silveiras", "Socorro", "Sorocaba", "Sud Mennucci", "Sumaré", "Suzanápolis", "Suzano", "Tabapuã", "Tabatinga", "Taboão da Serra", "Taciba", "Taguaí", "Taiaçu", "Taiúva", "Tambaú", "Tanabi", "Tapiraí", "Tapiratiba", "Taquaral", "Taquaritinga", "Taquarituba", "Taquarivaí", "Tarabai", "Tarumã", "Tatuí", "Taubaté", "Tejupá", "Teodoro Sampaio", "Terra Roxa", "Tietê", "Timburi", "Torre de Pedra", "Torrinha", "Trabiju", "Tremembé", "Três Fronteiras", "Tuiuti", "Tupã", "Tupi Paulista", "Turiúba", "Turmalina", "Ubarana", "Ubatuba", "Ubirajara", "Uchoa", "União Paulista", "Urânia", "Uru", "Urupês", "Valentim Gentil", "Valinhos", "Valparaíso", "Vargem", "Vargem Grande do Sul", "Vargem Grande Paulista", "Várzea Paulista", "Vera Cruz", "Vinhedo", "Viradouro", "Vista Alegre do Alto", "Vitória Brasil", "Votorantim", "Votuporanga", "Zacarias"];
+
+    var BASE_OFICIAL_BAIRROS_SP = {
+      "mogi das cruzes": ["Alto Ipiranga", "Alto da Boa Vista", "Biritiba-Ussu", "Botujuru", "Brás Cubas", "Centro", "Centro Cívico", "Cezar de Souza", "Chácara Jafet", "Conjunto Alvorada", "Conjunto do Bosque", "Conjunto Santo Ângelo", "Jardim Aeroporto III", "Jardim Bela Vista", "Jardim Camila", "Jardim Esperança", "Jardim Layr", "Jardim Maricá", "Jardim Santista", "Jardim Universo", "Jundiapeba", "Mogi Moderno", "Mogilar", "Parque Monte Líbano", "Ponte Grande", "Quatinga", "Rodeio", "Sabaúna", "Socorro", "Taiaçupeba", "Vila Cintra", "Vila da Prata", "Vila Industrial", "Vila Lavínia", "Vila Moraes", "Vila Natal", "Vila Nova Cintra", "Vila Nova Mogilar", "Vila Oliveira", "Vila Paulista", "Vila Rubens", "Vila Suíssa", "Vila São Francisco"],
+      "suzano": ["Centro", "Boa Vista", "Boa Vista Paulista", "Cidade Edson", "Jardim Casa Branca", "Jardim Colorado", "Jardim Fernandes", "Jardim Imperador", "Jardim Natal", "Jardim Quaresmeira", "Jardim Suzanópolis", "Jardim Vitória", "Miguel Badra", "Palmeiras", "Palmeiras de São Paulo", "Parque Maria Helena", "Vila Amorim", "Vila Figueira", "Vila Sol Nascente"],
+      "poa": ["Centro", "Calmon Viana", "Cidade Kemel", "Jardim Débora", "Jardim Ivonete", "Jardim Medina", "Jardim Nova Poá", "Vila Açoreana", "Vila Perracini", "Vila Santa Helena", "Vila Varela"],
+      "itaquaquecetuba": ["Centro", "Aracaré", "Jardim Caiuby", "Jardim Lucinda", "Jardim Odete", "Jardim Paineira", "Manoel Feio", "Monte Belo", "Parque Marengo", "Pirapora", "Vila Japão", "Vila Virginia"],
+      "ferraz de vasconcelos": ["Centro", "Cambiri", "Jardim Castelo", "Jardim Dayse", "Jardim São João", "Parque São Francisco", "Santa Margarida Paulista", "Santo Antônio Paulista", "Vila Jamil", "Vila Margarida", "Vila Romanópolis", "Vila Santo Antônio"],
+      "aruja": ["Centro", "Arujamérica", "Caputera", "Jardim Fazenda Rincão", "Jardim Rincão", "Jordanópolis", "Mirante", "Parque Rodrigo Barreto", "Vila Pedroso"],
+      "santa isabel": ["Centro", "Brotas", "Jardim Eldorado", "Jardim Novo Éden", "Lanifício", "Monte Serrat", "Parque São Benedito", "Treze de Maio", "Vila Guilherme"],
+      "guarulhos": ["Centro", "Bela Vista", "Bonsucesso", "Cumbica", "Gopouva", "Invernada", "Jardim Presidente Dutra", "Jardim Tranquilidade", "Macedo", "Monte Carmelo", "Pimentas", "Presidente Dutra", "São João", "Taboão", "Vila Augusta", "Vila Galvão"],
+      "sao paulo": ["Alto de Pinheiros", "Anhanguera", "Aricanduva", "Artur Alvim", "Barra Funda", "Bela Vista", "Belém", "Bom Retiro", "Brasilândia", "Brás", "Butantã", "Cachoeirinha", "Cambuci", "Campo Belo", "Campo Grande", "Campo Limpo", "Cangaiba", "Capão Redondo", "Carrão", "Casa Verde", "Centro", "Cidade Ademar", "Cidade Dutra", "Cidade Lider", "Cidade Tiradentes", "Consolação", "Cursino", "Ermelino Matarazzo", "Freguesia do Ó", "Grajaú", "Guaianases", "Iguatemi", "Ipiranga", "Itaim Bibi", "Itaim Paulista", "Itaquera", "Jabaquara", "Jaguara", "Jaguaré", "Jaraguá", "Jardim Helena", "Jardim Paulista", "Jardim São Luís", "Jardim Ângela", "Jaçanã", "José Bonifácio", "Lajeado", "Lapa", "Liberdade", "Limão", "Mandaqui", "Marsilac", "Moema", "Mooca", "Morumbi", "Parelheiros", "Pari", "Parque do Carmo", "Pedreira", "Penha", "Perdizes", "Perus", "Pinheiros", "Pirituba", "Ponte Rasa", "Raposo Tavares", "República", "Rio Pequeno", "Sacomã", "Santa Cecília", "Santana", "Santo Amaro", "Sapopemba", "Saúde", "Socorro", "São Domingos", "São Lucas", "São Mateus", "São Miguel", "São Rafael", "Sé", "Tatuapé", "Tremembé", "Tucuruvi", "Vila Andrade", "Vila Curuçá", "Vila Formosa", "Vila Guilherme", "Vila Jacuí", "Vila Leopoldina", "Vila Maria", "Vila Mariana", "Vila Matilde", "Vila Medeiros", "Vila Prudente", "Vila Sônia", "Água Rasa"]
+    };
+
+    var dadosLiderLogado = null;
+    var cidadeAtivaMemoria = '';
+    var bairrosCidadeAtiva = [];
+    var timerBuscaBairros = null;
+    var telefonePendenteCadastro = '';
+    var modalPrivacidadeObj = null;
+    var sincronizandoFila = false;
+
+    function normalizarTexto(txt) {
+      return (txt || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+    }
+
+    function obterDataLocalHoje() {
+      var d = new Date();
+      var ano = d.getFullYear();
+      var mes = String(d.getMonth() + 1).padStart(2, '0');
+      var dia = String(d.getDate()).padStart(2, '0');
+      return ano + '-' + mes + '-' + dia;
+    }
+
+    function obterOuCriarDeviceId() {
+      var chave = 'campanha_device_id';
+      var devId = localStorage.getItem(chave);
+      if (!devId) {
+        devId = 'DEV_' + Math.random().toString(36).substring(2, 12) + '_' + Date.now();
+        localStorage.setItem(chave, devId);
+      }
+      return devId;
+    }
+
+    /* ====== COMUNICAÇÃO ROBUSTA COM API GOOGLE (ONLINE / OFFLINE) ====== */
+    function chamarApiGoogle(parametros, callbackSucesso, callbackErro) {
+      if (!navigator.onLine) {
+        if (callbackErro) callbackErro(new Error("Dispositivo offline"));
+        return;
+      }
+
+      var queryString = new URLSearchParams(parametros).toString();
+      fetch(API_URL + '?' + queryString)
+        .then(function(res) { return res.json(); })
+        .then(function(dados) {
+          if (callbackSucesso) callbackSucesso(dados);
+        })
+        .catch(function(err) {
+          if (callbackErro) callbackErro(err);
+        });
+    }
+
+    /* ====== MOTOR OFFLINE & FILA LOCAL ====== */
+    function obterFilaOffline() {
+      try {
+        var fila = localStorage.getItem('campanha_fila_offline');
+        return fila ? JSON.parse(fila) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function salvarNaFilaOffline(dadosRelatorio) {
+      var fila = obterFilaOffline();
+      dadosRelatorio.idLocal = 'OFF_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+      dadosRelatorio.dataCriacaoLocal = new Date().toISOString();
+      fila.unshift(dadosRelatorio);
+      localStorage.setItem('campanha_fila_offline', JSON.stringify(fila));
+      atualizarBadgeFilaOffline();
+      return dadosRelatorio;
+    }
+
+    function removerDaFilaOffline(idLocal) {
+      var fila = obterFilaOffline();
+      var novaFila = fila.filter(function(item) { return item.idLocal !== idLocal; });
+      localStorage.setItem('campanha_fila_offline', JSON.stringify(novaFila));
+      atualizarBadgeFilaOffline();
+    }
+
+    function atualizarBadgeFilaOffline() {
+      var fila = obterFilaOffline();
+      var badge = document.getElementById('badgeQtdOfflinePendente');
+      if (badge) {
+        if (fila.length > 0) {
+          badge.textContent = fila.length;
+          badge.classList.remove('d-none');
+        } else {
+          badge.classList.add('d-none');
+        }
+      }
+    }
+
+    function atualizarStatusRedeVisual() {
+      var badge = document.getElementById('badgeStatusRede');
+      if (!badge) return;
+
+      var fila = obterFilaOffline();
+
+      if (!navigator.onLine) {
+        badge.className = 'badge-status-rede bg-warning text-dark shadow-sm';
+        badge.innerHTML = '<i class="bi bi-wifi-off"></i> <span>Offline</span>';
+      } else if (sincronizandoFila) {
+        badge.className = 'badge-status-rede bg-info text-white shadow-sm';
+        badge.innerHTML = '<span class="spinner-border spinner-border-sm" style="width: 10px; height: 10px;"></span> <span>Sincronizando (' + fila.length + ')</span>';
+      } else if (fila.length > 0) {
+        badge.className = 'badge-status-rede bg-primary text-white shadow-sm';
+        badge.innerHTML = '<i class="bi bi-cloud-arrow-up-fill"></i> <span>Pendente (' + fila.length + ')</span>';
+      } else {
+        badge.className = 'badge-status-rede bg-success text-white shadow-sm';
+        badge.innerHTML = '<i class="bi bi-wifi"></i> <span>Online</span>';
+      }
+    }
+
+    function sincronizarFilaOffline() {
+      if (!navigator.onLine || sincronizandoFila) return;
+      var fila = obterFilaOffline();
+      if (fila.length === 0) return;
+
+      sincronizandoFila = true;
+      atualizarStatusRedeVisual();
+
+      var item = fila[0]; // Processa o mais antigo da fila
+
+      chamarApiGoogle({
+        acao: 'salvarRelatorioDiario',
+        dados: JSON.stringify(item)
+      }, function(res) {
+        sincronizandoFila = false;
+        if (res && res.sucesso) {
+          removerDaFilaOffline(item.idLocal);
+          var restante = obterFilaOffline();
+          if (restante.length > 0) {
+            setTimeout(sincronizarFilaOffline, 300);
+          } else {
+            atualizarStatusRedeVisual();
+            mostrarSucesso("✅ Todos os relatórios offline foram sincronizados com sucesso na planilha!");
+            if (document.getElementById('painelHistoricoContainer').style.display !== 'none') {
+              carregarHistoricoTrabalho();
+            }
+          }
+        } else {
+          atualizarStatusRedeVisual();
+        }
+      }, function() {
+        sincronizandoFila = false;
+        atualizarStatusRedeVisual();
+      });
+    }
+
+    window.addEventListener('online', function() {
+      atualizarStatusRedeVisual();
+      sincronizarFilaOffline();
+    });
+
+    window.addEventListener('offline', function() {
+      atualizarStatusRedeVisual();
+    });
+
+    setInterval(function() {
+      atualizarStatusRedeVisual();
+      if (navigator.onLine && obterFilaOffline().length > 0 && !sincronizandoFila) {
+        sincronizarFilaOffline();
+      }
+    }, 15000);
+
+    /* ====== FIM MOTOR OFFLINE ====== */
+
+    function carregarCidadesIBGE() {
+      fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados/SP/municipios")
+        .then(function(res) { return res.json(); })
+        .then(function(dados) {
+          if (dados && Array.isArray(dados) && dados.length > 0) {
+            listaCidadesIBGE = dados.map(function(m) { return m.nome; }).sort();
+          }
+        })
+        .catch(function() {});
+    }
+
+    function obterModalPrivacidade() {
+      if (!modalPrivacidadeObj) {
+        modalPrivacidadeObj = new bootstrap.Modal(document.getElementById('modalPrivacidade'));
+      }
+      return modalPrivacidadeObj;
+    }
+
+    function abrirModalPrivacidadeConsulta() {
+      document.getElementById('modalBtnFecharX').style.display = 'block';
+      document.getElementById('modalFooterConsulta').style.display = 'block';
+      document.getElementById('modalFooterAceite').style.display = 'none';
+      obterModalPrivacidade().show();
+    }
+
+    function abrirModalPrivacidadeObrigatorio(tel) {
+      telefonePendenteCadastro = tel;
+      document.getElementById('modalBtnFecharX').style.display = 'none';
+      document.getElementById('modalFooterConsulta').style.display = 'none';
+      document.getElementById('modalFooterAceite').style.display = 'flex';
+      obterModalPrivacidade().show();
+    }
+
+    function aceitarTermosCadastro() {
+      if (telefonePendenteCadastro) {
+        localStorage.setItem('campanha_termos_aceitos_' + telefonePendenteCadastro, 'true');
+      }
+      obterModalPrivacidade().hide();
+
+      document.getElementById('secaoLogin').style.display = 'none';
+      document.getElementById('secaoPainelLider').style.display = 'none';
+      document.getElementById('secaoPrimeiroCadastro').style.display = 'block';
+      document.getElementById('cad_telefone').value = telefonePendenteCadastro;
+    }
+
+    function recusarTermosCadastro() {
+      obterModalPrivacidade().hide();
+      mostrarErro("⚠️ Para se cadastrar como líder na campanha, é necessário aceitar as Políticas de Proteção de Dados (LGPD).");
+    }
+
+    function processarIdentificacao(e, telForcado) {
+      if (e) e.preventDefault();
+      esconderAlertas();
+
+      var inputTel = document.getElementById('login_telefone');
+      var telDigitado = (telForcado || (inputTel ? inputTel.value : '')).replace(/\D/g, '');
+
+      if (!telDigitado || telDigitado.length < 8) {
+        mostrarErro("Por favor, digite um número de WhatsApp válido com DDD.");
+        return;
+      }
+
+      // Se estiver offline mas já possui perfil salvo localmente no celular
+      var perfilSalvoLocal = localStorage.getItem('campanha_perfil_lider_' + telDigitado);
+      if (!navigator.onLine && perfilSalvoLocal) {
+        try {
+          dadosLiderLogado = JSON.parse(perfilSalvoLocal);
+          localStorage.setItem('campanha_lider_tel', telDigitado);
+          exibirPainelLider();
+          return;
+        } catch(e) {}
+      }
+
+      var devId = obterOuCriarDeviceId();
+      setLoadingLogin(true);
+
+      chamarApiGoogle({
+        acao: 'buscarDadosLider',
+        telefone: telDigitado,
+        deviceId: devId
+      }, function(res) {
+        setLoadingLogin(false);
+
+        if (res.bloqueadoDispositivo) {
+          mostrarErro(res.mensagem);
+          return;
+        }
+
+        if (res.cadastrado) {
+          dadosLiderLogado = res;
+          localStorage.setItem('campanha_lider_tel', res.telefone);
+          localStorage.setItem('campanha_perfil_lider_' + res.telefone, JSON.stringify(res));
+          exibirPainelLider();
+        } 
+        else {
+          var jaAceitou = localStorage.getItem('campanha_termos_aceitos_' + telDigitado);
+          if (jaAceitou === 'true') {
+            document.getElementById('secaoLogin').style.display = 'none';
+            document.getElementById('secaoPainelLider').style.display = 'none';
+            document.getElementById('secaoPrimeiroCadastro').style.display = 'block';
+            document.getElementById('cad_telefone').value = telDigitado;
+          } else {
+            abrirModalPrivacidadeObrigatorio(telDigitado);
+          }
+        }
+      }, function(err) {
+        setLoadingLogin(false);
+        if (perfilSalvoLocal) {
+          dadosLiderLogado = JSON.parse(perfilSalvoLocal);
+          localStorage.setItem('campanha_lider_tel', telDigitado);
+          exibirPainelLider();
+        } else {
+          mostrarErro("Sem conexão com a internet. Conecte-se uma vez para validar seu acesso.");
+        }
+      });
+    }
+
+    function exibirPainelLider() {
+      document.getElementById('secaoLogin').style.display = 'none';
+      document.getElementById('secaoPrimeiroCadastro').style.display = 'none';
+      document.getElementById('secaoPainelLider').style.display = 'block';
+
+      document.getElementById('lblNomeLider').textContent = dadosLiderLogado.nome;
+      document.getElementById('lblTelefoneLider').textContent = dadosLiderLogado.telefone;
+
+      var selectCidade = document.getElementById('rel_cidade_select');
+      selectCidade.innerHTML = '';
+      
+      var cidades = dadosLiderLogado.cidades || [];
+      for (var i = 0; i < cidades.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = cidades[i];
+        opt.textContent = cidades[i];
+        selectCidade.appendChild(opt);
+      }
+
+      var divCidades = document.getElementById('listaCidadesAtuaisLider');
+      divCidades.innerHTML = '';
+      for (var j = 0; j < cidades.length; j++) {
+        var span = document.createElement('span');
+        span.className = 'badge bg-primary px-3 py-2';
+        span.textContent = cidades[j];
+        divCidades.appendChild(span);
+      }
+
+      if (cidades.length > 0) {
+        ativarCidadeNoCelular(cidades[0]);
+      }
+
+      document.getElementById('rel_dataTrabalho').value = obterDataLocalHoje();
+      atualizarBadgeFilaOffline();
+      atualizarStatusRedeVisual();
+      trocarAbaPainel('relatorio');
+    }
+
+    function trocarAbaPainel(aba) {
+      document.getElementById('tabRelatorio').classList.remove('active');
+      document.getElementById('tabHistorico').classList.remove('active');
+      document.getElementById('tabTrocaCidade').classList.remove('active');
+
+      document.getElementById('painelRelatorioContainer').style.display = 'none';
+      document.getElementById('painelHistoricoContainer').style.display = 'none';
+      document.getElementById('painelTrocaCidadeContainer').style.display = 'none';
+
+      esconderAlertas();
+
+      if (aba === 'relatorio') {
+        document.getElementById('tabRelatorio').classList.add('active');
+        document.getElementById('painelRelatorioContainer').style.display = 'block';
+        if (!document.getElementById('rel_dataTrabalho').value) {
+          document.getElementById('rel_dataTrabalho').value = obterDataLocalHoje();
+        }
+      } else if (aba === 'historico') {
+        document.getElementById('tabHistorico').classList.add('active');
+        document.getElementById('painelHistoricoContainer').style.display = 'block';
+        carregarHistoricoTrabalho();
+      } else if (aba === 'trocaCidade') {
+        document.getElementById('tabTrocaCidade').classList.add('active');
+        document.getElementById('painelTrocaCidadeContainer').style.display = 'block';
+        if (!document.getElementById('tc_dataInicio').value) {
+          document.getElementById('tc_dataInicio').value = obterDataLocalHoje();
+        }
+      }
+    }
+
+    function fazerLogoutLider() {
+      localStorage.removeItem('campanha_lider_tel');
+      dadosLiderLogado = null;
+      document.getElementById('secaoPainelLider').style.display = 'none';
+      document.getElementById('secaoPrimeiroCadastro').style.display = 'none';
+      document.getElementById('secaoLogin').style.display = 'block';
+      document.getElementById('login_telefone').value = '';
+      esconderAlertas();
+    }
+
+    function ativarCidadeNoCelular(novaCidade) {
+      if (!novaCidade) return;
+      var cidNorm = normalizarTexto(novaCidade);
+      
+      var inputBairro = document.getElementById('rel_bairros');
+      if (inputBairro && cidadeAtivaMemoria !== '' && cidadeAtivaMemoria !== novaCidade) {
+        inputBairro.value = '';
+      }
+
+      if (BASE_OFICIAL_BAIRROS_SP[cidNorm]) {
+        bairrosCidadeAtiva = [...BASE_OFICIAL_BAIRROS_SP[cidNorm]];
+      } else {
+        bairrosCidadeAtiva = ['Centro', 'Distrito Industrial', 'Zona Rural'];
+      }
+      cidadeAtivaMemoria = novaCidade;
+
+      var box = document.getElementById('rel_bairros_sugestoes');
+      if (box) { box.style.display = 'none'; box.innerHTML = ''; }
+
+      if (navigator.onLine) {
+        chamarApiGoogle({
+          acao: 'obterBairrosDaCidade',
+          cidade: novaCidade
+        }, function(listaPlanilha) {
+          if (listaPlanilha && Array.isArray(listaPlanilha) && listaPlanilha.length > 0) {
+            var mapaUnico = {};
+            bairrosCidadeAtiva.forEach(function(b) { mapaUnico[b] = true; });
+            listaPlanilha.forEach(function(b) { mapaUnico[b] = true; });
+            bairrosCidadeAtiva = Object.keys(mapaUnico).sort();
+            
+            var inputB = document.getElementById('rel_bairros');
+            if (inputB && inputB.value.trim().length >= 1) {
+              filtrarBairrosGov(inputB.value);
+            }
+          }
+        }, function(){});
+      }
+    }
+
+    function selecionarCidadeDireto(cid, inputDestinoId, divSugestoesId) {
+      document.getElementById(inputDestinoId).value = cid;
+      var box = document.getElementById(divSugestoesId);
+      if (box) box.style.display = 'none';
+    }
+
+    function filtrarCidadesIBGE(termo, divSugestoesId, inputDestinoId) {
+      var box = document.getElementById(divSugestoesId);
+      box.innerHTML = '';
+      if (!termo || termo.trim().length < 1) {
+        box.style.display = 'none';
+        return;
+      }
+      var tNorm = normalizarTexto(termo);
+      var filtrados = listaCidadesIBGE.filter(function(c) {
+        return normalizarTexto(c).indexOf(tNorm) !== -1;
+      }).slice(0, 10);
+
+      if (filtrados.length === 0) {
+        box.style.display = 'none';
+        return;
+      }
+
+      filtrados.forEach(function(cid) {
+        var div = document.createElement('div');
+        div.className = 'suggestion-item';
+        div.innerHTML = '<i class="bi bi-geo-alt-fill text-primary me-2 fs-5"></i><span>' + cid + '</span>';
+        
+        div.addEventListener('pointerdown', function(e) {
+          e.preventDefault();
+          selecionarCidadeDireto(cid, inputDestinoId, divSugestoesId);
+        });
+        div.onclick = function(e) {
+          e.preventDefault();
+          selecionarCidadeDireto(cid, inputDestinoId, divSugestoesId);
+        };
+        box.appendChild(div);
+      });
+      box.style.display = 'block';
+    }
+
+    function selecionarBairroDireto(nomeBairro) {
+      var input = document.getElementById('rel_bairros');
+      if (input) {
+        input.value = nomeBairro;
+      }
+      var box = document.getElementById('rel_bairros_sugestoes');
+      if (box) {
+        box.style.display = 'none';
+      }
+    }
+
+    function filtrarBairrosGov(termo) {
+      var box = document.getElementById('rel_bairros_sugestoes');
+      var selectCidade = document.getElementById('rel_cidade_select');
+      var cidadeAtual = selectCidade ? selectCidade.value : (dadosLiderLogado && dadosLiderLogado.cidades ? dadosLiderLogado.cidades[0] : '');
+      if (!cidadeAtual) return;
+
+      if (cidadeAtivaMemoria !== cidadeAtual || bairrosCidadeAtiva.length === 0) {
+        ativarCidadeNoCelular(cidadeAtual);
+      }
+
+      var termoNorm = termo ? normalizarTexto(termo) : '';
+      var correspondencias = [];
+      if (!termoNorm) {
+        correspondencias = bairrosCidadeAtiva.slice(0, 25);
+      } else {
+        correspondencias = bairrosCidadeAtiva.filter(function(b) {
+          return normalizarTexto(b).indexOf(termoNorm) !== -1;
+        });
+      }
+
+      renderizarSugestoesBairros(correspondencias);
+    }
+
+    function renderizarSugestoesBairros(lista) {
+      var box = document.getElementById('rel_bairros_sugestoes');
+      box.innerHTML = '';
+
+      if (!lista || lista.length === 0) {
+        var divNone = document.createElement('div');
+        divNone.className = 'suggestion-item text-muted';
+        divNone.style.fontSize = '14px';
+        divNone.innerHTML = '<em>Nenhum bairro oficial encontrado para esta cidade.</em>';
+        divNone.onclick = function() { box.style.display = 'none'; };
+        box.appendChild(divNone);
+        box.style.display = 'block';
+        return;
+      }
+
+      lista.slice(0, 20).forEach(function(bNome) {
+        var div = document.createElement('div');
+        div.className = 'suggestion-item';
+        div.innerHTML = '<i class="bi bi-geo-alt-fill text-success me-2 fs-5"></i><span>' + bNome + '</span>';
+        
+        div.addEventListener('pointerdown', function(e) {
+          e.preventDefault();
+          selecionarBairroDireto(bNome);
+        });
+        div.onclick = function(e) {
+          e.preventDefault();
+          selecionarBairroDireto(bNome);
+        };
+        box.appendChild(div);
+      });
+      box.style.display = 'block';
+    }
+
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('#cad_cidades_sugestoes') && e.target.id !== 'cad_cidade') {
+        var b1 = document.getElementById('cad_cidades_sugestoes');
+        if (b1) b1.style.display = 'none';
+      }
+      if (!e.target.closest('#tc_cidades_sugestoes') && e.target.id !== 'tc_cidade') {
+        var b2 = document.getElementById('tc_cidades_sugestoes');
+        if (b2) b2.style.display = 'none';
+      }
+      if (!e.target.closest('#rel_bairros_sugestoes') && e.target.id !== 'rel_bairros') {
+        var b3 = document.getElementById('rel_bairros_sugestoes');
+        if (b3) b3.style.display = 'none';
+      }
+    });
+
+    function salvarPrimeiroCadastro(e) {
+      e.preventDefault();
+      esconderAlertas();
+
+      var cidadeDigitada = document.getElementById('cad_cidade').value.trim();
+      var cidadeValida = listaCidadesIBGE.some(function(c) {
+        return normalizarTexto(c) === normalizarTexto(cidadeDigitada);
+      });
+
+      if (!cidadeValida) {
+        mostrarErro("❌ Cidade não reconhecida. Por favor, digite e selecione uma cidade oficial do Estado de São Paulo na lista.");
+        return;
+      }
+
+      var devId = obterOuCriarDeviceId();
+      var dados = {
+        nome: document.getElementById('cad_nome').value.trim(),
+        telefone: document.getElementById('cad_telefone').value.trim(),
+        email: document.getElementById('cad_email').value.trim(),
+        cidade: cidadeDigitada,
+        dataInicio: document.getElementById('cad_dataInicio').value,
+        deviceId: devId
+      };
+
+      setLoadingNovoLider(true);
+
+      chamarApiGoogle({
+        acao: 'salvarCadastroOuNovaCidade',
+        dados: JSON.stringify(dados)
+      }, function(res) {
+        setLoadingNovoLider(false);
+        if (res.sucesso) {
+          mostrarSucesso(res.mensagem);
+          dadosLiderLogado = {
+            nome: dados.nome,
+            telefone: dados.telefone,
+            email: dados.email,
+            cidades: [dados.cidade],
+            deviceId: devId
+          };
+          localStorage.setItem('campanha_lider_tel', dados.telefone);
+          localStorage.setItem('campanha_perfil_lider_' + dados.telefone, JSON.stringify(dadosLiderLogado));
+          setTimeout(function() {
+            exibirPainelLider();
+          }, 1200);
+        } else {
+          mostrarErro(res.mensagem);
+        }
+      }, function(err) {
+        setLoadingNovoLider(false);
+        mostrarErro("Erro ao cadastrar: " + (err.message || err));
+      });
+    }
+
+    function enviarRelatorio(e) {
+      e.preventDefault();
+      esconderAlertas();
+
+      var bairroDigitado = document.getElementById('rel_bairros').value.trim();
+      var selectCidade = document.getElementById('rel_cidade_select');
+      var cidadeSelecionada = selectCidade ? selectCidade.value : '';
+
+      var bairroValido = bairrosCidadeAtiva.some(function(b) {
+        return normalizarTexto(b) === normalizarTexto(bairroDigitado);
+      });
+
+      if (!bairroValido) {
+        mostrarErro("❌ O bairro '" + bairroDigitado + "' não pertence à base oficial de " + cidadeSelecionada + ". Selecione uma das opções exibidas na lista.");
+        return;
+      }
+
+      var dados = {
+        telefone: dadosLiderLogado.telefone,
+        nome: dadosLiderLogado.nome,
+        dataTrabalho: document.getElementById('rel_dataTrabalho').value,
+        cidade: cidadeSelecionada,
+        bairros: bairroDigitado,
+        descricao: document.getElementById('rel_descricao').value.trim()
+      };
+
+      // SE ESTIVER SEM INTERNET (MODO OFFLINE)
+      if (!navigator.onLine) {
+        salvarNaFilaOffline(dados);
+        document.getElementById('rel_descricao').value = '';
+        document.getElementById('rel_bairros').value = '';
+        mostrarSucesso("📡 Relatório salvo no aparelho (Modo Offline)! Assim que houver conexão, ele será enviado automaticamente para a planilha.");
+        atualizarStatusRedeVisual();
+        setTimeout(function() {
+          trocarAbaPainel('historico');
+        }, 1500);
+        return;
+      }
+
+      setLoadingRelatorio(true);
+
+      chamarApiGoogle({
+        acao: 'salvarRelatorioDiario',
+        dados: JSON.stringify(dados)
+      }, function(res) {
+        setLoadingRelatorio(false);
+        if (res.sucesso) {
+          mostrarSucesso(res.mensagem);
+          document.getElementById('rel_descricao').value = '';
+          document.getElementById('rel_bairros').value = '';
+          setTimeout(function() {
+            trocarAbaPainel('historico');
+          }, 1200);
+        } else {
+          mostrarErro(res.mensagem);
+        }
+      }, function(err) {
+        setLoadingRelatorio(false);
+        salvarNaFilaOffline(dados);
+        document.getElementById('rel_descricao').value = '';
+        document.getElementById('rel_bairros').value = '';
+        mostrarSucesso("📡 Falha no sinal: Relatório salvo na memória interna! Ele será sincronizado automaticamente quando a internet voltar.");
+        atualizarStatusRedeVisual();
+        setTimeout(function() {
+          trocarAbaPainel('historico');
+        }, 1500);
+      });
+    }
+
+    function carregarHistoricoTrabalho() {
+      if (!dadosLiderLogado) return;
+      var loading = document.getElementById('historicoLoading');
+      var lista = document.getElementById('historicoLista');
+      
+      loading.style.display = 'block';
+      lista.innerHTML = '';
+
+      var filaOffline = obterFilaOffline();
+
+      function renderizarListaCompleta(itensNuvem) {
+        loading.style.display = 'none';
+        lista.innerHTML = '';
+
+        var totalItens = (filaOffline ? filaOffline.length : 0) + (itensNuvem ? itensNuvem.length : 0);
+
+        if (totalItens === 0) {
+          lista.innerHTML = '<div class="text-center text-muted py-4"><i class="bi bi-inbox fs-2"></i><p class="mt-2 small">Nenhum relatório enviado ainda.</p></div>';
+          return;
+        }
+
+        // 1. RENDERIZA PRIMEIRO OS PENDENTES OFFLINE NO TOPO
+        if (filaOffline && filaOffline.length > 0) {
+          filaOffline.forEach(function(itemOff) {
+            var cardOff = document.createElement('div');
+            cardOff.className = 'card-historico card-offline-pendente';
+            cardOff.innerHTML = `
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <strong class="text-dark"><i class="bi bi-calendar-event me-1"></i>${itemOff.dataTrabalho}</strong>
+                <span class="badge bg-warning text-dark"><i class="bi bi-clock-history me-1"></i>Pendente (Offline)</span>
+              </div>
+              <div class="small text-muted mb-2">
+                <i class="bi bi-geo-alt-fill text-primary me-1"></i><strong>${itemOff.cidade}</strong> &bull; Bairro: ${itemOff.bairros}
+              </div>
+              <div class="small text-secondary bg-white p-2 rounded border" style="white-space: pre-wrap;">${itemOff.descricao}</div>
+              <div class="text-end mt-2">
+                <small class="text-warning fw-bold" style="font-size: 11px;"><i class="bi bi-cloud-arrow-up me-1"></i>Será enviado assim que houver internet</small>
+              </div>
+            `;
+            lista.appendChild(cardOff);
+          });
+        }
+
+        // 2. RENDERIZA OS ITENS DA PLANILHA (ONLINE)
+        if (itensNuvem && itensNuvem.length > 0) {
+          itensNuvem.forEach(function(item) {
+            var cardClass = 'card-historico';
+            var badgeClass = 'badge-normal';
+            
+            if (item.tipoDia === 'sabado') {
+              cardClass += ' card-sabado';
+              badgeClass = 'badge-sabado';
+            } else if (item.tipoDia === 'domingo') {
+              cardClass += ' card-domingo';
+              badgeClass = 'badge-domingo';
+            }
+
+            var card = document.createElement('div');
+            card.className = cardClass;
+            card.innerHTML = `
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <strong class="text-dark"><i class="bi bi-calendar-event me-1"></i>${item.data}</strong>
+                <div>
+                  <span class="badge ${badgeClass} me-1">${item.diaSemana || 'Dia Útil'}</span>
+                  <span class="badge bg-success-subtle text-success border border-success-subtle"><i class="bi bi-check2-all me-1"></i>Enviado</span>
+                </div>
+              </div>
+              <div class="small text-muted mb-2">
+                <i class="bi bi-geo-alt-fill text-primary me-1"></i><strong>${item.cidade}</strong> &bull; Bairro: ${item.bairro}
+              </div>
+              <div class="small text-secondary bg-light p-2 rounded border" style="white-space: pre-wrap;">${item.descricao}</div>
+            `;
+            lista.appendChild(card);
+          });
+        }
+      }
+
+      if (!navigator.onLine) {
+        renderizarListaCompleta([]);
+        return;
+      }
+
+      chamarApiGoogle({
+        acao: 'buscarHistoricoLider',
+        telefone: dadosLiderLogado.telefone
+      }, function(itens) {
+        renderizarListaCompleta(itens || []);
+      }, function() {
+        renderizarListaCompleta([]);
+      });
+    }
+
+    function enviarNovaCidade(e) {
+      e.preventDefault();
+      esconderAlertas();
+
+      var novaCidade = document.getElementById('tc_cidade').value.trim();
+      var cidadeValida = listaCidadesIBGE.some(function(c) {
+        return normalizarTexto(c) === normalizarTexto(novaCidade);
+      });
+
+      if (!cidadeValida) {
+        mostrarErro("❌ Cidade não reconhecida. Por favor, digite e selecione uma cidade oficial do Estado de São Paulo na lista.");
+        return;
+      }
+
+      var devId = obterOuCriarDeviceId();
+      var dados = {
+        telefone: dadosLiderLogado.telefone,
+        nome: dadosLiderLogado.nome,
+        email: dadosLiderLogado.email,
+        cidade: novaCidade,
+        dataInicio: document.getElementById('tc_dataInicio').value,
+        deviceId: devId
+      };
+
+      setLoadingNovaCidade(true);
+
+      chamarApiGoogle({
+        acao: 'salvarCadastroOuNovaCidade',
+        dados: JSON.stringify(dados)
+      }, function(res) {
+        setLoadingNovaCidade(false);
+        if (res.sucesso) {
+          mostrarSucesso(res.mensagem);
+          if (!dadosLiderLogado.cidades) dadosLiderLogado.cidades = [];
+          if (dadosLiderLogado.cidades.indexOf(novaCidade) === -1) {
+            dadosLiderLogado.cidades.push(novaCidade);
+          }
+          localStorage.setItem('campanha_perfil_lider_' + dadosLiderLogado.telefone, JSON.stringify(dadosLiderLogado));
+          setTimeout(function() {
+            exibirPainelLider();
+          }, 1200);
+        } else {
+          mostrarErro(res.mensagem);
+        }
+      }, function(err) {
+        setLoadingNovaCidade(false);
+        mostrarErro("Erro ao cadastrar nova cidade: " + (err.message || err));
+      });
+    }
+
+    function setLoadingLogin(isLoading) {
+      var btn = document.getElementById('btnAvancarLogin') || document.getElementById('btnLogin');
+      var txt = document.getElementById('btnTxtLogin') || document.getElementById('btnLoginTxt');
+      var spin = document.getElementById('btnSpinLogin') || document.getElementById('btnLoginSpin');
+      if (btn) btn.disabled = isLoading;
+      if (txt) txt.classList.toggle('d-none', isLoading);
+      if (spin) spin.classList.toggle('d-none', !isLoading);
+    }
+
+    function setLoadingNovoLider(isLoading) {
+      var btn = document.getElementById('btnSalvarNovoLider');
+      var txt = document.getElementById('btnTxtNovoLider');
+      var spin = document.getElementById('btnSpinNovoLider');
+      if (btn) btn.disabled = isLoading;
+      if (txt) txt.classList.toggle('d-none', isLoading);
+      if (spin) spin.classList.toggle('d-none', !isLoading);
+    }
+
+    function setLoadingRelatorio(isLoading) {
+      var btn = document.getElementById('btnEnviarRelatorio');
+      var txt = document.getElementById('btnTxtRelatorio');
+      var spin = document.getElementById('btnSpinRelatorio');
+      if (btn) btn.disabled = isLoading;
+      if (txt) txt.classList.toggle('d-none', isLoading);
+      if (spin) spin.classList.toggle('d-none', !isLoading);
+    }
+
+    function setLoadingNovaCidade(isLoading) {
+      var btn = document.getElementById('btnSalvarNovaCidade');
+      var txt = document.getElementById('btnTxtNovaCidade');
+      var spin = document.getElementById('btnSpinNovaCidade');
+      if (btn) btn.disabled = isLoading;
+      if (txt) txt.classList.toggle('d-none', isLoading);
+      if (spin) spin.classList.toggle('d-none', !isLoading);
+    }
+
+    function mostrarErro(msg) {
+      var box = document.getElementById('alertaErro') || document.getElementById('msgAlerta');
+      var span = document.getElementById('msgErro') || document.getElementById('msgAlerta');
+      if (span) span.textContent = msg;
+      if (box) box.classList.remove('d-none');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function mostrarSucesso(msg) {
+      var box = document.getElementById('alertaSucesso') || document.getElementById('msgSucesso');
+      var span = document.getElementById('msgSucesso') || box;
+      if (span) span.textContent = msg;
+      if (box) box.classList.remove('d-none');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function esconderAlertas() {
+      var err = document.getElementById('alertaErro') || document.getElementById('msgAlerta');
+      var suc = document.getElementById('alertaSucesso') || document.getElementById('msgSucesso');
+      if (err) err.classList.add('d-none');
+      if (suc) suc.classList.add('d-none');
+    }
+
+    window.onload = function() {
+      obterOuCriarDeviceId();
+      carregarCidadesIBGE();
+      atualizarStatusRedeVisual();
+      atualizarBadgeFilaOffline();
+
+      var hoje = obterDataLocalHoje();
+      if (document.getElementById('cad_dataInicio')) document.getElementById('cad_dataInicio').value = hoje;
+      if (document.getElementById('rel_dataTrabalho')) document.getElementById('rel_dataTrabalho').value = hoje;
+      if (document.getElementById('tc_dataInicio')) document.getElementById('tc_dataInicio').value = hoje;
+
+      var telInput = document.getElementById('login_telefone');
+      var telSalvo = localStorage.getItem('campanha_lider_tel');
+      
+      if (telSalvo) {
+        if (telInput) telInput.value = telSalvo;
+        processarIdentificacao(null, telSalvo);
+      }
+
+      if (navigator.onLine) {
+        sincronizarFilaOffline();
+      }
+    };
   </script>
 </body>
 </html>

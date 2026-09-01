@@ -401,33 +401,41 @@
 
   </div>
 
-  <!-- MODAL LGPD -->
+  <!-- MODAL LGPD (OBRIGATÓRIO NA PRIMEIRA VEZ) -->
   <div class="modal fade" id="modalPrivacidade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content" style="border-radius: 16px;">
+      <div class="modal-content shadow-lg" style="border-radius: 18px; border: 1px solid rgba(0,0,0,0.1);">
         <div class="modal-header bg-light">
-          <h6 class="modal-title fw-bold text-dark d-flex align-items-center">
+          <h6 class="modal-title fw-bold text-dark d-flex align-items-center mb-0">
             <i class="bi bi-shield-lock-fill text-primary me-2 fs-5"></i>
             Privacidade e Proteção de Dados (LGPD)
           </h6>
-          <button type="button" class="btn-close" id="modalBtnFecharX" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          <button type="button" class="btn-close" id="modalBtnFecharX" data-bs-dismiss="modal" aria-label="Fechar" style="display: none;"></button>
         </div>
-        <div class="modal-body p-4" style="font-size: 13px; line-height: 1.6; color: #374151;">
-          <p>Este aplicativo opera em total conformidade com a <strong>Lei nº 13.709/2018 (LGPD)</strong>.</p>
+        <div class="modal-body p-4" style="font-size: 13.5px; line-height: 1.6; color: #374151;">
+          <p>Este aplicativo opera em total conformidade com a <strong>Lei Geral de Proteção de Dados (Lei nº 13.709/2018 - LGPD)</strong>.</p>
           <ul class="ps-3 mb-3">
-            <li><strong>Finalidade:</strong> Coleta e acompanhamento das atividades de campo da liderança.</li>
-            <li><strong>Sigilo:</strong> Seus dados não serão vendidos nem repassados a terceiros.</li>
-            <li><strong>Segurança:</strong> Armazenamento seguro na nuvem com criptografia de ponta a ponta.</li>
+            <li><strong>Finalidade:</strong> Apenas o registro e acompanhamento das atividades de campo da coordenação e lideranças da campanha.</li>
+            <li><strong>Sigilo e Proteção:</strong> Seus dados não serão compartilhados, vendidos nem divulgados para terceiros.</li>
+            <li><strong>Segurança:</strong> Armazenamento seguro e criptografado na nuvem.</li>
           </ul>
+          <div class="alert alert-info py-2 px-3 small mb-0 d-flex align-items-center gap-2" style="border-radius: 8px;">
+            <i class="bi bi-info-circle-fill fs-5"></i>
+            <span>Para utilizar o aplicativo, é obrigatório ler e concordar com os termos.</span>
+          </div>
         </div>
-        <div class="modal-footer bg-light py-2" id="modalFooterConsulta">
-          <button type="button" class="btn btn-sm btn-primary px-4 fw-semibold" data-bs-dismiss="modal">Fechar</button>
-        </div>
-        <div class="modal-footer bg-light py-3 d-flex justify-content-between align-items-center" id="modalFooterAceite" style="display: none;">
-          <button type="button" class="btn btn-sm btn-outline-secondary px-3" onclick="recusarTermosCadastro()">Voltar</button>
-          <button type="button" class="btn btn-sm btn-success px-4 fw-bold" onclick="aceitarTermosCadastro()">
-            <i class="bi bi-check2-circle me-1"></i> Li e Concordo
+        <!-- RODAPÉ OBRIGATÓRIO (APENAS BOTÃO LI E CONCORDO) -->
+        <div class="modal-footer bg-light py-3" id="modalFooterObrigatorio">
+          <button type="button" class="btn btn-success w-100 py-3 fw-bold shadow-sm" id="btnAceitarLGPD" onclick="aceitarTermosLGPD()" style="border-radius: 10px; font-size: 15px;">
+            <i class="bi bi-check2-circle me-2 fs-5"></i> Li e Concordo
           </button>
+        </div>
+        <!-- RODAPÉ PARA CONSULTAS POSTERIORES (COM BOTÃO FECHAR E STATUS DESABILITADO) -->
+        <div class="modal-footer bg-light py-2 d-flex justify-content-between align-items-center" id="modalFooterConsulta" style="display: none;">
+          <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1" style="font-size: 11px;">
+            <i class="bi bi-check2-all me-1"></i> Termos já aceitos neste celular
+          </span>
+          <button type="button" class="btn btn-sm btn-primary px-4 fw-semibold" data-bs-dismiss="modal" style="border-radius: 8px;">Fechar</button>
         </div>
       </div>
     </div>
@@ -545,6 +553,7 @@
       fila.unshift(dadosRelatorio);
       localStorage.setItem('campanha_fila_offline', JSON.stringify(fila));
       atualizarBadgeFilaOffline();
+      verificarAceiteLGPDInicial();
       return dadosRelatorio;
     }
 
@@ -683,36 +692,40 @@
       return modalPrivacidadeObj;
     }
 
-    function abrirModalPrivacidadeConsulta() {
-      document.getElementById('modalBtnFecharX').style.display = 'block';
-      document.getElementById('modalFooterConsulta').style.display = 'block';
-      document.getElementById('modalFooterAceite').style.display = 'none';
-      obterModalPrivacidade().show();
-    }
-
-    function abrirModalPrivacidadeObrigatorio(tel) {
-      telefonePendenteCadastro = tel;
-      document.getElementById('modalBtnFecharX').style.display = 'none';
-      document.getElementById('modalFooterConsulta').style.display = 'none';
-      document.getElementById('modalFooterAceite').style.display = 'flex';
-      obterModalPrivacidade().show();
-    }
-
-    function aceitarTermosCadastro() {
-      if (telefonePendenteCadastro) {
-        localStorage.setItem('campanha_termos_aceitos_' + telefonePendenteCadastro, 'true');
+    function verificarAceiteLGPDInicial() {
+      var aceito = localStorage.getItem('campanha_termos_gerais_aceitos');
+      if (aceito !== 'true') {
+        document.getElementById('modalBtnFecharX').style.display = 'none';
+        document.getElementById('modalFooterObrigatorio').style.display = 'block';
+        document.getElementById('modalFooterConsulta').style.display = 'none';
+        obterModalPrivacidade().show();
       }
-      obterModalPrivacidade().hide();
-
-      document.getElementById('secaoLogin').style.display = 'none';
-      document.getElementById('secaoPainelLider').style.display = 'none';
-      document.getElementById('secaoPrimeiroCadastro').style.display = 'block';
-      document.getElementById('cad_telefone').value = telefonePendenteCadastro;
     }
 
-    function recusarTermosCadastro() {
-      obterModalPrivacidade().hide();
-      mostrarErro("⚠️ Para se cadastrar como líder na campanha, é necessário aceitar as Políticas de Proteção de Dados (LGPD).");
+    function aceitarTermosLGPD() {
+      localStorage.setItem('campanha_termos_gerais_aceitos', 'true');
+      var btn = document.getElementById('btnAceitarLGPD');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-check-all me-2"></i> Termos Aceitos!';
+      }
+      setTimeout(function() {
+        obterModalPrivacidade().hide();
+      }, 400);
+    }
+
+    function abrirModalPrivacidadeConsulta() {
+      var aceito = localStorage.getItem('campanha_termos_gerais_aceitos');
+      document.getElementById('modalBtnFecharX').style.display = 'block';
+      
+      if (aceito === 'true') {
+        document.getElementById('modalFooterObrigatorio').style.display = 'none';
+        document.getElementById('modalFooterConsulta').style.display = 'flex';
+      } else {
+        document.getElementById('modalFooterObrigatorio').style.display = 'block';
+        document.getElementById('modalFooterConsulta').style.display = 'none';
+      }
+      obterModalPrivacidade().show();
     }
 
     function processarIdentificacao(e, telForcado) {

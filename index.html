@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Liderança 1000</title>
 
-  <!-- Link para o Manifest PWA -->
-  <link rel="manifest" href="manifest.json">
+  <!-- PWA Manifest & Meta Tags -->
+  <link rel="manifest" href="manifest.json?v=2">
   <meta name="theme-color" content="#1a73e8">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,6 +16,9 @@
   <link rel="apple-touch-icon" href="icone.png">
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
     html, body {
       margin: 0;
       padding: 0;
@@ -24,6 +27,46 @@
       overflow: hidden;
       background-color: #f8f9fa;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* BARRA SUPERIOR DE INSTALAÇÃO DO ÍCONE COM Z-INDEX MÁXIMO */
+    #bannerInstalarApp {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-bottom: 2.5px solid #1a73e8;
+      padding: 10px 14px;
+      z-index: 2147483647;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.18);
+    }
+
+    .btn-instalar {
+      background: #1a73e8;
+      color: #ffffff;
+      border: none;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 2px 6px rgba(26,115,232,0.3);
+    }
+
+    .btn-fechar {
+      background: transparent;
+      border: none;
+      color: #6b7280;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 0 4px;
+      line-height: 1;
     }
 
     #appFrame {
@@ -38,73 +81,22 @@
       display: block;
       z-index: 1;
     }
-
-    /* BANNER DESTACADO DE INSTALAÇÃO DO ÍCONE */
-    #bannerInstalarApp {
-      position: fixed;
-      bottom: 18px;
-      left: 14px;
-      right: 14px;
-      background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.28);
-      border: 2px solid #1a73e8;
-      padding: 12px 14px;
-      z-index: 9999999;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      animation: slideUp 0.3s ease-out;
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(80px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    .btn-instalar {
-      background: #1a73e8;
-      color: #ffffff;
-      border: none;
-      font-weight: 700;
-      font-size: 14px;
-      padding: 10px 16px;
-      border-radius: 10px;
-      cursor: pointer;
-      white-space: nowrap;
-      box-shadow: 0 3px 10px rgba(26,115,232,0.35);
-    }
-
-    .btn-instalar:active {
-      transform: scale(0.96);
-    }
-
-    .btn-fechar {
-      background: transparent;
-      border: none;
-      color: #9ca3af;
-      font-size: 22px;
-      font-weight: bold;
-      cursor: pointer;
-      padding: 0 4px;
-      line-height: 1;
-    }
   </style>
 </head>
 <body>
 
-  <!-- BANNER DE INSTALAÇÃO VISÍVEL PARA O LÍDER -->
+  <!-- BARRA DE FIXAÇÃO DO ÍCONE NO TOPO -->
   <div id="bannerInstalarApp">
-    <img src="icone.png" alt="Liderança 1000" style="width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+    <img src="icone.png" alt="Ícone" style="width: 38px; height: 38px; border-radius: 8px; flex-shrink: 0;">
     <div style="flex-grow: 1;">
-      <div style="font-weight: 700; font-size: 14px; color: #111827;">Liderança 1000</div>
-      <div style="font-size: 11px; color: #4b5563; line-height: 1.2;">Toque para adicionar à tela inicial</div>
+      <div style="font-weight: 700; font-size: 13px; color: #111827;">Liderança 1000</div>
+      <div style="font-size: 11px; color: #4b5563;">Adicione à sua tela inicial</div>
     </div>
     <button class="btn-instalar" onclick="instalarComUmClique()">Instalar</button>
     <button class="btn-fechar" onclick="fecharBannerInstalacao()">&times;</button>
   </div>
 
-  <!-- APLICATIVO EM TELA CHEIA LIMPA (SEM AVISOS DO GOOGLE) -->
+  <!-- APLICATIVO EM TELA CHEIA (SEM AVISOS DO GOOGLE) -->
   <iframe 
     id="appFrame" 
     src="https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec" 
@@ -112,16 +104,15 @@
   </iframe>
 
   <script>
-    // Registro do Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js').catch(function(){});
+        navigator.serviceWorker.register('./sw.js?v=2').catch(function(){});
       });
     }
 
     var eventoInstalacao = null;
 
-    // Se o app já estiver aberto pelo ícone da tela inicial (Modo Standalone), esconde o banner
+    // Se já estiver aberto no atalho da tela inicial, esconde a barra
     var isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator.standalone === true);
     if (isStandalone) {
       var b = document.getElementById('bannerInstalarApp');
@@ -150,9 +141,9 @@
       } else {
         var isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         if (isIos) {
-          alert('No iPhone: toque no botão Compartilhar (quadrado com seta no rodapé do Safari) e selecione "Adicionar à Tela de Início".');
+          alert('No iPhone: toque no ícone de Compartilhar (quadrado com seta no rodapé do Safari) e depois em "Adicionar à Tela de Início".');
         } else {
-          alert('Para adicionar o ícone: toque nos 3 pontinhos ⋮ no topo do seu navegador e selecione "Adicionar à tela inicial" ou "Instalar aplicativo".');
+          alert('Para fixar o ícone: toque nos 3 pontinhos ⋮ no topo do navegador e escolha "Adicionar à tela inicial" ou "Instalar aplicativo".');
         }
       }
     }

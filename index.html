@@ -445,6 +445,12 @@
 
   <script>
     // ENDPOINT OFICIAL DO GOOGLE APPS SCRIPT
+    var deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      deferredPrompt = e;
+    });
+
     var API_URL = "https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec";
 
     // REGISTRO DO SERVICE WORKER NATIVO
@@ -706,14 +712,23 @@
       }
     }
 
-    function aceitarTermosLGPD() {
+        function aceitarTermosLGPD() {
       localStorage.setItem('campanha_termos_gerais_aceitos', 'true');
       var btn = document.getElementById('btnAceitarLGPD');
       if (btn) {
         btn.disabled = true;
         btn.className = 'btn btn-success w-100 py-3 fw-bold shadow-sm disabled';
-        btn.innerHTML = '<i class="bi bi-check-all me-2"></i> Termos Aceitos com Sucesso!';
+        btn.innerHTML = '<i class="bi bi-check-all me-2"></i> Termos Aceitos!';
       }
+
+      // Dispara a instalação do aplicativo na tela inicial
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function(choiceResult) {
+          deferredPrompt = null;
+        }).catch(function() {});
+      }
+
       setTimeout(function() {
         var modalEl = document.getElementById('modalPrivacidade');
         if (modalEl) {
@@ -774,6 +789,10 @@
       }
 
       var devId = obterOuCriarDeviceId();
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function() { deferredPrompt = null; }).catch(function(){});
+      }
       setLoadingLogin(true);
 
       chamarApiGoogle({

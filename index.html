@@ -5,22 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Liderança 1000</title>
 
-  <!-- Link para o Manifest -->
+  <!-- Link para o Manifest PWA -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#1a73e8">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Lider1000">
+  <meta name="apple-mobile-web-app-title" content="Liderança 1000">
   <link rel="icon" type="image/png" href="icone.png">
   <link rel="apple-touch-icon" href="icone.png">
-
-  <!-- Registro do Service Worker -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js');
-    }
-  </script>
 
   <style>
     html, body {
@@ -43,10 +36,68 @@
       margin: 0;
       padding: 0;
       display: block;
+      z-index: 1;
+    }
+
+    /* BANNER FLUTUANTE DE 1 TOQUE PARA CRIAR O ÍCONE */
+    #bannerInstalarApp {
+      position: fixed;
+      bottom: 20px;
+      left: 16px;
+      right: 16px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      border: 2px solid #1a73e8;
+      padding: 14px 16px;
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideUp 0.4s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .btn-instalar {
+      background: #1a73e8;
+      color: #ffffff;
+      border: none;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(26,115,232,0.3);
+    }
+
+    .btn-fechar {
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 0 4px;
     }
   </style>
 </head>
 <body>
+
+  <!-- BANNER DE INSTALAÇÃO COM 1 CLIQUE -->
+  <div id="bannerInstalarApp" style="display: none;">
+    <img src="icone.png" alt="Ícone" style="width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;">
+    <div style="flex-grow: 1;">
+      <div style="font-weight: 700; font-size: 14px; color: #1f2937;">Liderança 1000</div>
+      <div style="font-size: 11px; color: #6b7280; line-height: 1.2;">Toque para fixar o ícone na tela inicial</div>
+    </div>
+    <button class="btn-instalar" onclick="instalarComUmClique()">Instalar</button>
+    <button class="btn-fechar" onclick="fecharBannerInstalacao()">&times;</button>
+  </div>
 
   <!-- APLICATIVO EM TELA CHEIA LIMPA (SEM AVISOS DO GOOGLE) -->
   <iframe 
@@ -55,5 +106,59 @@
     allow="geolocation; camera; microphone; clipboard-read; clipboard-write;">
   </iframe>
 
+  <script>
+    // Registro do Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('./sw.js').catch(function(){});
+      });
+    }
+
+    var eventoInstalacao = null;
+
+    // Detecta se já está rodando como app instalado
+    var jaEstaInstalado = window.matchMedia('(display-mode: standalone)').matches || 
+                          window.navigator.standalone === true ||
+                          localStorage.getItem('lider1000_instalado') === 'true';
+
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      eventoInstalacao = e;
+      if (!jaEstaInstalado) {
+        document.getElementById('bannerInstalarApp').style.display = 'flex';
+      }
+    });
+
+    window.addEventListener('appinstalled', function() {
+      localStorage.setItem('lider1000_instalado', 'true');
+      document.getElementById('bannerInstalarApp').style.display = 'none';
+    });
+
+    function instalarComUmClique() {
+      if (eventoInstalacao) {
+        eventoInstalacao.prompt();
+        eventoInstalacao.userChoice.then(function(choiceResult) {
+          if (choiceResult.outcome === 'accepted') {
+            localStorage.setItem('lider1000_instalado', 'true');
+          }
+          document.getElementById('bannerInstalarApp').style.display = 'none';
+          eventoInstalacao = null;
+        });
+      } else {
+        alert('Para fixar o ícone: toque nos 3 pontinhos ⋮ do navegador e escolha "Adicionar à tela inicial".');
+      }
+    }
+
+    function fecharBannerInstalacao() {
+      document.getElementById('bannerInstalarApp').style.display = 'none';
+    }
+
+    // Se o navegador demorar a disparar o evento, exibe o banner automaticamente após 1 segundo
+    setTimeout(function() {
+      if (!jaEstaInstalado && eventoInstalacao) {
+        document.getElementById('bannerInstalarApp').style.display = 'flex';
+      }
+    }, 1200);
+  </script>
 </body>
 </html>

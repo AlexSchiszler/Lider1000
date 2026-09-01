@@ -38,9 +38,68 @@
       display: block;
       z-index: 1;
     }
+    
+    /* MODAL VISUAL ELEGANTE QUANDO O CHROME NÃO DISPARA O PROMPT NATIVO */
+    #modalGuiaInstalacao {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 9999999;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 22px 20px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      animation: popIn 0.25s ease-out;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .btn-entendi {
+      background: #1a73e8;
+      color: #ffffff;
+      border: none;
+      font-weight: 700;
+      padding: 10px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      margin-top: 14px;
+      cursor: pointer;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
+
+  <!-- MODAL DE FIXAÇÃO DO ÍCONE -->
+  <div id="modalGuiaInstalacao" onclick="fecharModalGuia()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <img src="icone.png" alt="Liderança 1000" style="width: 56px; height: 56px; border-radius: 14px; margin-bottom: 12px;">
+      <h3 style="margin: 0 0 8px 0; font-size: 17px; color: #111827; font-weight: 700;">Fixar Ícone no Celular</h3>
+      <p style="font-size: 13px; color: #4b5563; line-height: 1.5; margin: 0 0 12px 0;">
+        Toque nos <strong>3 pontinhos ⋮</strong> no canto superior direito do seu navegador e selecione:<br>
+        <span style="display: inline-block; margin-top: 8px; background: #e8f0fe; color: #1a73e8; font-weight: 700; padding: 6px 12px; border-radius: 8px;">
+          📲 "Adicionar à tela inicial"
+        </span>
+      </p>
+      <button class="btn-entendi" onclick="fecharModalGuia()">Entendi</button>
+    </div>
+  </div>
 
   <!-- APLICATIVO NATIVO EM TELA CHEIA -->
   <iframe 
@@ -58,13 +117,13 @@
 
     var eventoInstalacao = null;
 
-    // Captura o evento nativo do Android para fixar na tela inicial
+    // Captura o evento nativo do Android
     window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
       eventoInstalacao = e;
     });
 
-    // Ao receber o clique do botão interno do app, dispara imediatamente o prompt do sistema Android
+    // Ao clicar no botão do app
     window.addEventListener('message', function(event) {
       if (event.data && event.data.acao === 'instalar_pwa') {
         if (eventoInstalacao) {
@@ -72,9 +131,16 @@
           eventoInstalacao.userChoice.then(function() {
             eventoInstalacao = null;
           });
+        } else {
+          // Se o navegador já instalou ou bloqueou o pop-up automático, exibe a orientação imediata
+          document.getElementById('modalGuiaInstalacao').style.display = 'flex';
         }
       }
     });
+
+    function fecharModalGuia() {
+      document.getElementById('modalGuiaInstalacao').style.display = 'none';
+    }
   </script>
 </body>
 </html>

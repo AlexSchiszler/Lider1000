@@ -1,9 +1,11 @@
-const CACHE_NAME = 'lider1000-v5-offline';
+const CACHE_NAME = 'lider1000-v6-install';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './icone.png',
+  './icon-192.png',
+  './icon-512.png',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
@@ -33,7 +35,6 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
-  // Chamadas de API para o Google Script vão direto para a rede
   if (e.request.url.includes('script.google.com')) {
     return;
   }

@@ -7,13 +7,13 @@
 
   <!-- PWA & Mobile Web App Meta Tags -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1a73e8">
+  <meta name="theme-color" content="#0d6efd">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Liderança 1000">
-  <link rel="icon" type="image/png" href="icone.png">
-  <link rel="apple-touch-icon" href="icone.png">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
 
   <!-- Bootstrap 5 CSS & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -204,6 +204,22 @@
   </div>
 
   <div class="main-container">
+
+    <!-- CARTÃO DE INSTALAÇÃO DO APP (EXIBIDO APENAS SE ABERTO NO NAVEGADOR) -->
+    <div id="cardInstalarApp" class="card p-3 mb-3 border-primary shadow-sm" style="border-radius: 14px; background: linear-gradient(135deg, #e8f0fe 0%, #ffffff 100%);">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-3">
+          <img src="icon-192.png" width="44" height="44" style="border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.12);">
+          <div>
+            <div class="fw-bold text-dark" style="font-size: 14px;">Instalar Aplicativo</div>
+            <small class="text-muted" style="font-size: 11px;">Fixar ícone na tela inicial do celular</small>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm fw-bold px-3 py-2 shadow-sm" onclick="instalarPwaDireto()" style="border-radius: 8px;">
+          <i class="bi bi-download me-1"></i> Instalar
+        </button>
+      </div>
+    </div>
     
     <!-- ALERTAS GERAIS -->
     <div id="alertaErro" class="alert alert-danger alert-dismissible fade show d-none" role="alert">
@@ -439,6 +455,47 @@
     // ENDPOINT OFICIAL DO GOOGLE APPS SCRIPT
     var API_URL = "https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec";
 
+    // CONTROLE DE INSTALAÇÃO DO PWA
+    var deferredPrompt = null;
+    
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      deferredPrompt = e;
+      var card = document.getElementById('cardInstalarApp');
+      if (card && !ehModoAppInstalado()) {
+        card.style.display = 'block';
+      }
+    });
+
+    window.addEventListener('appinstalled', function() {
+      deferredPrompt = null;
+      var card = document.getElementById('cardInstalarApp');
+      if (card) card.style.display = 'none';
+      mostrarSucesso("🎉 Aplicativo Liderança 1000 instalado com sucesso na sua tela inicial!");
+    });
+
+    function ehModoAppInstalado() {
+      return (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true);
+    }
+
+    function instalarPwaDireto() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function(choiceResult) {
+          if (choiceResult.outcome === 'accepted') {
+            var card = document.getElementById('cardInstalarApp');
+            if (card) card.style.display = 'none';
+          }
+          deferredPrompt = null;
+        });
+      } else {
+        // Se o navegador não disparou o evento ainda, orienta o usuário
+        alert("Para fixar o app:
+1. Toque nos 3 pontinhos (ou Compartilhar no iPhone)
+2. Selecione 'Instalar aplicativo' ou 'Adicionar à tela inicial'");
+      }
+    }
+
     // REGISTRO DO SERVICE WORKER NATIVO
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
@@ -490,7 +547,7 @@
       return devId;
     }
 
-    /* ====== COMUNICAÇÃO ROBUSTA COM API GOOGLE (ONLINE / OFFLINE) ====== */
+    /* ====== COMUNICAÇÃO ROBUSTA COM API GOOGLE ====== */
     function chamarApiGoogle(parametros, callbackSucesso, callbackErro) {
       if (!navigator.onLine) {
         if (callbackErro) callbackErro(new Error("Dispositivo offline"));
@@ -577,7 +634,7 @@
       sincronizandoFila = true;
       atualizarStatusRedeVisual();
 
-      var item = fila[0]; // Processa o mais antigo da fila
+      var item = fila[0];
 
       chamarApiGoogle({
         acao: 'salvarRelatorioDiario',
@@ -685,7 +742,6 @@
         return;
       }
 
-      // Se estiver offline mas já possui perfil salvo localmente no celular
       var perfilSalvoLocal = localStorage.getItem('campanha_perfil_lider_' + telDigitado);
       if (!navigator.onLine && perfilSalvoLocal) {
         try {
@@ -1309,6 +1365,12 @@
       carregarCidadesIBGE();
       atualizarStatusRedeVisual();
       atualizarBadgeFilaOffline();
+
+      // Se já estiver instalado como App independente, esconde o card de instalação
+      if (ehModoAppInstalado()) {
+        var cardInst = document.getElementById('cardInstalarApp');
+        if (cardInst) cardInst.style.display = 'none';
+      }
 
       var hoje = obterDataLocalHoje();
       if (document.getElementById('cad_dataInicio')) document.getElementById('cad_dataInicio').value = hoje;

@@ -589,30 +589,50 @@
       }
     }
 
+    var itensEmTransmissao = {};
+
     function sincronizarFilaOffline() {
       if (!navigator.onLine || sincronizandoFila) return;
       var fila = obterFilaOffline();
-      if (fila.length === 0) return;
+      if (fila.length === 0) {
+        atualizarStatusRedeVisual();
+        return;
+      }
+
+      // Procura o primeiro item que ainda não está em transmissão
+      var itemParaEnviar = null;
+      for (var f = 0; f < fila.length; f++) {
+        if (!itensEmTransmissao[fila[f].idLocal]) {
+          itemParaEnviar = fila[f];
+          break;
+        }
+      }
+
+      if (!itemParaEnviar) return; // Todos os itens já estão sendo transmitidos
 
       sincronizandoFila = true;
+      itensEmTransmissao[itemParaEnviar.idLocal] = true;
       atualizarStatusRedeVisual();
-
-      var item = fila[0]; // Processa o primeiro item da fila
 
       chamarApiGoogle({
         acao: 'salvarRelatorioDiario',
-        dados: JSON.stringify(item)
+        dados: JSON.stringify(itemParaEnviar)
       }, function(res) {
         sincronizandoFila = false;
-        if (res && res.sucesso) {
-          // Remove imediatamente para não duplicar
-          removerDaFilaOffline(item.idLocal);
+        delete itensEmTransmissao[itemParaEnviar.idLocal];
+
+        // Se gravou ou se a planilha identificou que já estava gravado: REMOVE IMEDIATAMENTE DA FILA
+        if (res && (res.sucesso || res.duplicadoIgnorado)) {
+          removerDaFilaOffline(itemParaEnviar.idLocal);
+          
           var restante = obterFilaOffline();
+          atualizarBadgeFilaOffline();
+          atualizarStatusRedeVisual();
+
           if (restante.length > 0) {
-            setTimeout(sincronizarFilaOffline, 300);
+            setTimeout(sincronizarFilaOffline, 200);
           } else {
-            atualizarStatusRedeVisual();
-            mostrarSucesso("✅ Todos os relatórios offline foram sincronizados com sucesso na planilha!");
+            mostrarSucesso("✅ Todos os relatórios offline foram transmitidos com sucesso e a pendência foi zerada!");
             if (document.getElementById('painelHistoricoContainer').style.display !== 'none') {
               carregarHistoricoTrabalho();
             }
@@ -622,6 +642,7 @@
         }
       }, function() {
         sincronizandoFila = false;
+        delete itensEmTransmissao[itemParaEnviar.idLocal];
         atualizarStatusRedeVisual();
       });
     }

@@ -6,7 +6,7 @@
   <title>Liderança 1000</title>
 
   <!-- PWA Manifest & Meta Tags -->
-  <link rel="manifest" href="manifest.json?v=2">
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1a73e8">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -29,46 +29,6 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    /* BARRA SUPERIOR DE INSTALAÇÃO DO ÍCONE COM Z-INDEX MÁXIMO */
-    #bannerInstalarApp {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #ffffff;
-      border-bottom: 2.5px solid #1a73e8;
-      padding: 10px 14px;
-      z-index: 2147483647;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.18);
-    }
-
-    .btn-instalar {
-      background: #1a73e8;
-      color: #ffffff;
-      border: none;
-      font-weight: 700;
-      font-size: 13px;
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      white-space: nowrap;
-      box-shadow: 0 2px 6px rgba(26,115,232,0.3);
-    }
-
-    .btn-fechar {
-      background: transparent;
-      border: none;
-      color: #6b7280;
-      font-size: 20px;
-      font-weight: bold;
-      cursor: pointer;
-      padding: 0 4px;
-      line-height: 1;
-    }
-
     #appFrame {
       position: absolute;
       top: 0;
@@ -81,19 +41,43 @@
       display: block;
       z-index: 1;
     }
+
+    /* BOTÃO ELEGANTE FIXO PARA INSTALAR O ÍCONE COM 1 CLIQUE */
+    #cardInstalarFlutuante {
+      position: fixed;
+      top: 10px;
+      right: 12px;
+      z-index: 2147483647;
+      background: #ffffff;
+      border: 1.5px solid #1a73e8;
+      border-radius: 30px;
+      padding: 4px 12px 4px 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    #cardInstalarFlutuante:active {
+      transform: scale(0.95);
+    }
+
+    .btn-instalar-texto {
+      color: #1a73e8;
+      font-weight: 700;
+      font-size: 12px;
+      white-space: nowrap;
+    }
   </style>
 </head>
 <body>
 
-  <!-- BARRA DE FIXAÇÃO DO ÍCONE NO TOPO -->
-  <div id="bannerInstalarApp">
-    <img src="icone.png" alt="Ícone" style="width: 38px; height: 38px; border-radius: 8px; flex-shrink: 0;">
-    <div style="flex-grow: 1;">
-      <div style="font-weight: 700; font-size: 13px; color: #111827;">Liderança 1000</div>
-      <div style="font-size: 11px; color: #4b5563;">Adicione à sua tela inicial</div>
-    </div>
-    <button class="btn-instalar" onclick="instalarComUmClique()">Instalar</button>
-    <button class="btn-fechar" onclick="fecharBannerInstalacao()">&times;</button>
+  <!-- BOTÃO DIRETO DE 1 CLIQUE: FIXAR ÍCONE -->
+  <div id="cardInstalarFlutuante" onclick="instalarComUmClique()" title="Adicionar à Tela Inicial">
+    <img src="icone.png" alt="Liderança 1000" style="width: 28px; height: 28px; border-radius: 50%;">
+    <span class="btn-instalar-texto">➕ Fixar Ícone</span>
   </div>
 
   <!-- APLICATIVO EM TELA CHEIA (SEM AVISOS DO GOOGLE) -->
@@ -106,50 +90,40 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js?v=2').catch(function(){});
+        navigator.serviceWorker.register('./sw.js').catch(function(){});
       });
     }
 
     var eventoInstalacao = null;
 
-    // Se já estiver aberto no atalho da tela inicial, esconde a barra
-    var isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator.standalone === true);
-    if (isStandalone) {
-      var b = document.getElementById('bannerInstalarApp');
-      if (b) b.style.display = 'none';
-    }
-
     window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
       eventoInstalacao = e;
-      if (!isStandalone) {
-        document.getElementById('bannerInstalarApp').style.display = 'flex';
-      }
     });
 
     window.addEventListener('appinstalled', function() {
-      document.getElementById('bannerInstalarApp').style.display = 'none';
+      var btn = document.getElementById('cardInstalarFlutuante');
+      if (btn) btn.style.display = 'none';
     });
 
     function instalarComUmClique() {
       if (eventoInstalacao) {
         eventoInstalacao.prompt();
-        eventoInstalacao.userChoice.then(function() {
-          document.getElementById('bannerInstalarApp').style.display = 'none';
+        eventoInstalacao.userChoice.then(function(res) {
+          if (res.outcome === 'accepted') {
+            var btn = document.getElementById('cardInstalarFlutuante');
+            if (btn) btn.style.display = 'none';
+          }
           eventoInstalacao = null;
         });
       } else {
         var isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         if (isIos) {
-          alert('No iPhone: toque no ícone de Compartilhar (quadrado com seta no rodapé do Safari) e depois em "Adicionar à Tela de Início".');
+          alert('No iPhone: toque no ícone de Compartilhar (no rodapé do Safari) e depois em "Adicionar à Tela de Início".');
         } else {
-          alert('Para fixar o ícone: toque nos 3 pontinhos ⋮ no topo do navegador e escolha "Adicionar à tela inicial" ou "Instalar aplicativo".');
+          alert('Para adicionar o ícone à sua tela inicial: toque nos 3 pontinhos ⋮ no topo do navegador e selecione "Adicionar à tela inicial" ou "Instalar aplicativo".');
         }
       }
-    }
-
-    function fecharBannerInstalacao() {
-      document.getElementById('bannerInstalarApp').style.display = 'none';
     }
   </script>
 </body>

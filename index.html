@@ -6,7 +6,7 @@
   <title>Liderança 1000</title>
 
   <!-- PWA Manifest & Meta Tags -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="manifest.json?v=3">
   <meta name="theme-color" content="#1a73e8">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -43,7 +43,7 @@
 </head>
 <body>
 
-  <!-- APLICATIVO NATIVO EM TELA CHEIA LIMPA (SEM NENHUM BANNER NO RODAPÉ) -->
+  <!-- APLICATIVO NATIVO EM TELA CHEIA LIMPA (SEM NENHUM BANNER) -->
   <iframe 
     id="appFrame" 
     src="https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec" 
@@ -53,28 +53,9 @@
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js').catch(function(){});
+        navigator.serviceWorker.register('./sw.js?v=3').catch(function(){});
       });
     }
-
-    var deferredPrompt = null;
-
-    window.addEventListener('beforeinstallprompt', function(e) {
-      e.preventDefault();
-      deferredPrompt = e;
-    });
-
-    // Ouve o clique do botão [➕ Fixar Ícone] que fica no topo do aplicativo
-    window.addEventListener('message', function(event) {
-      if (event.data && event.data.acao === 'instalar_pwa') {
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          deferredPrompt.userChoice.then(function() {
-            deferredPrompt = null;
-          });
-        }
-      }
-    });
   </script>
 </body>
 </html>

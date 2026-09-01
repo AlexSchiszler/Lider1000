@@ -39,26 +39,26 @@
       z-index: 1;
     }
 
-    /* BANNER FLUTUANTE DE 1 TOQUE PARA CRIAR O ÍCONE */
+    /* BANNER DESTACADO DE INSTALAÇÃO DO ÍCONE */
     #bannerInstalarApp {
       position: fixed;
-      bottom: 20px;
-      left: 16px;
-      right: 16px;
+      bottom: 18px;
+      left: 14px;
+      right: 14px;
       background: #ffffff;
       border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.28);
       border: 2px solid #1a73e8;
-      padding: 14px 16px;
-      z-index: 999999;
+      padding: 12px 14px;
+      z-index: 9999999;
       display: flex;
       align-items: center;
       gap: 12px;
-      animation: slideUp 0.4s ease-out;
+      animation: slideUp 0.3s ease-out;
     }
 
     @keyframes slideUp {
-      from { transform: translateY(100px); opacity: 0; }
+      from { transform: translateY(80px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
 
@@ -72,28 +72,33 @@
       border-radius: 10px;
       cursor: pointer;
       white-space: nowrap;
-      box-shadow: 0 4px 12px rgba(26,115,232,0.3);
+      box-shadow: 0 3px 10px rgba(26,115,232,0.35);
+    }
+
+    .btn-instalar:active {
+      transform: scale(0.96);
     }
 
     .btn-fechar {
       background: transparent;
       border: none;
       color: #9ca3af;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: bold;
       cursor: pointer;
       padding: 0 4px;
+      line-height: 1;
     }
   </style>
 </head>
 <body>
 
-  <!-- BANNER DE INSTALAÇÃO COM 1 CLIQUE -->
-  <div id="bannerInstalarApp" style="display: none;">
-    <img src="icone.png" alt="Ícone" style="width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;">
+  <!-- BANNER DE INSTALAÇÃO VISÍVEL PARA O LÍDER -->
+  <div id="bannerInstalarApp">
+    <img src="icone.png" alt="Liderança 1000" style="width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
     <div style="flex-grow: 1;">
-      <div style="font-weight: 700; font-size: 14px; color: #1f2937;">Liderança 1000</div>
-      <div style="font-size: 11px; color: #6b7280; line-height: 1.2;">Toque para fixar o ícone na tela inicial</div>
+      <div style="font-weight: 700; font-size: 14px; color: #111827;">Liderança 1000</div>
+      <div style="font-size: 11px; color: #4b5563; line-height: 1.2;">Toque para adicionar à tela inicial</div>
     </div>
     <button class="btn-instalar" onclick="instalarComUmClique()">Instalar</button>
     <button class="btn-fechar" onclick="fecharBannerInstalacao()">&times;</button>
@@ -116,49 +121,45 @@
 
     var eventoInstalacao = null;
 
-    // Detecta se já está rodando como app instalado
-    var jaEstaInstalado = window.matchMedia('(display-mode: standalone)').matches || 
-                          window.navigator.standalone === true ||
-                          localStorage.getItem('lider1000_instalado') === 'true';
+    // Se o app já estiver aberto pelo ícone da tela inicial (Modo Standalone), esconde o banner
+    var isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator.standalone === true);
+    if (isStandalone) {
+      var b = document.getElementById('bannerInstalarApp');
+      if (b) b.style.display = 'none';
+    }
 
     window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
       eventoInstalacao = e;
-      if (!jaEstaInstalado) {
+      if (!isStandalone) {
         document.getElementById('bannerInstalarApp').style.display = 'flex';
       }
     });
 
     window.addEventListener('appinstalled', function() {
-      localStorage.setItem('lider1000_instalado', 'true');
       document.getElementById('bannerInstalarApp').style.display = 'none';
     });
 
     function instalarComUmClique() {
       if (eventoInstalacao) {
         eventoInstalacao.prompt();
-        eventoInstalacao.userChoice.then(function(choiceResult) {
-          if (choiceResult.outcome === 'accepted') {
-            localStorage.setItem('lider1000_instalado', 'true');
-          }
+        eventoInstalacao.userChoice.then(function() {
           document.getElementById('bannerInstalarApp').style.display = 'none';
           eventoInstalacao = null;
         });
       } else {
-        alert('Para fixar o ícone: toque nos 3 pontinhos ⋮ do navegador e escolha "Adicionar à tela inicial".');
+        var isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIos) {
+          alert('No iPhone: toque no botão Compartilhar (quadrado com seta no rodapé do Safari) e selecione "Adicionar à Tela de Início".');
+        } else {
+          alert('Para adicionar o ícone: toque nos 3 pontinhos ⋮ no topo do seu navegador e selecione "Adicionar à tela inicial" ou "Instalar aplicativo".');
+        }
       }
     }
 
     function fecharBannerInstalacao() {
       document.getElementById('bannerInstalarApp').style.display = 'none';
     }
-
-    // Se o navegador demorar a disparar o evento, exibe o banner automaticamente após 1 segundo
-    setTimeout(function() {
-      if (!jaEstaInstalado && eventoInstalacao) {
-        document.getElementById('bannerInstalarApp').style.display = 'flex';
-      }
-    }, 1200);
   </script>
 </body>
 </html>

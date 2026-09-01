@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Painel do Líder - Campanha Política</title>
+  
+  <!-- PWA & Mobile Web App Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Painel do Líder">
+  <meta name="application-name" content="Painel do Líder - Campanha Política">
+  <meta name="theme-color" content="#1a73e8">
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/9442/9442111.png">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/9442/9442111.png">
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Painel%20do%20L%C3%ADder%20-%20Campanha%20Pol%C3%ADtica%22%2C%22short_name%22%3A%22Painel%20L%C3%ADder%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%231a73e8%22%2C%22theme_color%22%3A%22%231a73e8%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fcdn-icons-png.flaticon.com%2F512%2F9442%2F9442111.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #f8f9fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    #appFrame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      margin: 0;
+      padding: 0;
+      display: block;
+    }
+
+    #loadingOverlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.3s ease;
+    }
+
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 4px solid #e8eaed;
+      border-top: 4px solid #1a73e8;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TELA DE CARREGAMENTO SUAVE -->
+  <div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p style="margin-top: 14px; font-weight: 600; color: #1a73e8; font-size: 15px;">Carregando Painel do Líder...</p>
+  </div>
+
+  <!-- APLICATIVO EM TELA CHEIA LIMPA (SEM AVISOS DO GOOGLE) -->
+  <iframe 
+    id="appFrame" 
+    src="https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec" 
+    allow="geolocation; camera; microphone; clipboard-read; clipboard-write;"
+    onload="ocultarLoading()">
+  </iframe>
+
+  <script>
+    function ocultarLoading() {
+      var loader = document.getElementById('loadingOverlay');
+      if (loader) {
+        loader.style.opacity = '0';
+        setTimeout(function() {
+          loader.style.display = 'none';
+        }, 300);
+      }
+    }
+  </script>
+</body>
+</html>

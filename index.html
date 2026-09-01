@@ -16,9 +16,7 @@
   <link rel="apple-touch-icon" href="icone.png">
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     html, body {
       margin: 0;
       padding: 0;
@@ -28,7 +26,6 @@
       background-color: #f8f9fa;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-
     #appFrame {
       position: absolute;
       top: 0;
@@ -41,46 +38,11 @@
       display: block;
       z-index: 1;
     }
-
-    /* BOTÃO ELEGANTE FIXO PARA INSTALAR O ÍCONE COM 1 CLIQUE */
-    #cardInstalarFlutuante {
-      position: fixed;
-      top: 10px;
-      right: 12px;
-      z-index: 2147483647;
-      background: #ffffff;
-      border: 1.5px solid #1a73e8;
-      border-radius: 30px;
-      padding: 4px 12px 4px 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.22);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    #cardInstalarFlutuante:active {
-      transform: scale(0.95);
-    }
-
-    .btn-instalar-texto {
-      color: #1a73e8;
-      font-weight: 700;
-      font-size: 12px;
-      white-space: nowrap;
-    }
   </style>
 </head>
 <body>
 
-  <!-- BOTÃO DIRETO DE 1 CLIQUE: FIXAR ÍCONE -->
-  <div id="cardInstalarFlutuante" onclick="instalarComUmClique()" title="Adicionar à Tela Inicial">
-    <img src="icone.png" alt="Liderança 1000" style="width: 28px; height: 28px; border-radius: 50%;">
-    <span class="btn-instalar-texto">➕ Fixar Ícone</span>
-  </div>
-
-  <!-- APLICATIVO EM TELA CHEIA (SEM AVISOS DO GOOGLE) -->
+  <!-- APLICATIVO NATIVO EM TELA CHEIA -->
   <iframe 
     id="appFrame" 
     src="https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec" 
@@ -101,30 +63,21 @@
       eventoInstalacao = e;
     });
 
-    window.addEventListener('appinstalled', function() {
-      var btn = document.getElementById('cardInstalarFlutuante');
-      if (btn) btn.style.display = 'none';
-    });
-
-    function instalarComUmClique() {
-      if (eventoInstalacao) {
-        eventoInstalacao.prompt();
-        eventoInstalacao.userChoice.then(function(res) {
-          if (res.outcome === 'accepted') {
-            var btn = document.getElementById('cardInstalarFlutuante');
-            if (btn) btn.style.display = 'none';
-          }
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.acao === 'instalar_pwa') {
+        if (eventoInstalacao) {
+          eventoInstalacao.prompt();
           eventoInstalacao = null;
-        });
-      } else {
-        var isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        if (isIos) {
-          alert('No iPhone: toque no ícone de Compartilhar (no rodapé do Safari) e depois em "Adicionar à Tela de Início".');
         } else {
-          alert('Para adicionar o ícone à sua tela inicial: toque nos 3 pontinhos ⋮ no topo do navegador e selecione "Adicionar à tela inicial" ou "Instalar aplicativo".');
+          var isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+          if (isIos) {
+            alert('No iPhone: toque no ícone de Compartilhar (no rodapé do Safari) e selecione "Adicionar à Tela de Início".');
+          } else {
+            alert('Para fixar o ícone na tela inicial:\n\n1. Toque nos 3 pontinhos ⋮ no topo direito do navegador.\n2. Selecione "Adicionar à tela inicial" ou "Instalar aplicativo".');
+          }
         }
       }
-    }
+    });
   </script>
 </body>
 </html>

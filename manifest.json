@@ -1,0 +1,18 @@
+﻿{
+  "name": "Liderança 1000",
+  "short_name": "Liderança 1000",
+  "description": "Portal do Líder - Campanha Política",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#1a73e8",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -685,20 +685,24 @@
         .catch(function() {});
     }
 
-    function obterModalPrivacidade() {
-      if (!modalPrivacidadeObj) {
-        modalPrivacidadeObj = new bootstrap.Modal(document.getElementById('modalPrivacidade'));
-      }
-      return modalPrivacidadeObj;
-    }
-
-    function verificarAceiteLGPDInicial() {
+        function verificarAceiteLGPDInicial() {
       var aceito = localStorage.getItem('campanha_termos_gerais_aceitos');
       if (aceito !== 'true') {
-        document.getElementById('modalBtnFecharX').style.display = 'none';
-        document.getElementById('modalFooterObrigatorio').style.display = 'block';
-        document.getElementById('modalFooterConsulta').style.display = 'none';
-        obterModalPrivacidade().show();
+        var xBtn = document.getElementById('modalBtnFecharX');
+        var footObr = document.getElementById('modalFooterObrigatorio');
+        var footCons = document.getElementById('modalFooterConsulta');
+        if (xBtn) xBtn.style.display = 'none';
+        if (footObr) footObr.style.display = 'block';
+        if (footCons) footCons.style.display = 'none';
+        
+        var modalEl = document.getElementById('modalPrivacidade');
+        if (modalEl) {
+          var modal = bootstrap.Modal.getOrCreateInstance(modalEl, {
+            backdrop: 'static',
+            keyboard: false
+          });
+          modal.show();
+        }
       }
     }
 
@@ -707,21 +711,40 @@
       var btn = document.getElementById('btnAceitarLGPD');
       if (btn) {
         btn.disabled = true;
-        btn.innerHTML = '<i class="bi bi-check-all me-2"></i> Termos Aceitos!';
+        btn.className = 'btn btn-success w-100 py-3 fw-bold shadow-sm disabled';
+        btn.innerHTML = '<i class="bi bi-check-all me-2"></i> Termos Aceitos com Sucesso!';
       }
       setTimeout(function() {
-        obterModalPrivacidade().hide();
-      }, 400);
+        var modalEl = document.getElementById('modalPrivacidade');
+        if (modalEl) {
+          var modal = bootstrap.Modal.getInstance(modalEl);
+          if (modal) modal.hide();
+        }
+      }, 500);
     }
 
     function abrirModalPrivacidadeConsulta() {
       var aceito = localStorage.getItem('campanha_termos_gerais_aceitos');
-      document.getElementById('modalBtnFecharX').style.display = 'block';
+      var xBtn = document.getElementById('modalBtnFecharX');
+      var footObr = document.getElementById('modalFooterObrigatorio');
+      var footCons = document.getElementById('modalFooterConsulta');
+
+      if (xBtn) xBtn.style.display = 'block';
       
       if (aceito === 'true') {
-        document.getElementById('modalFooterObrigatorio').style.display = 'none';
-        document.getElementById('modalFooterConsulta').style.display = 'flex';
+        if (footObr) footObr.style.display = 'none';
+        if (footCons) footCons.style.display = 'flex';
       } else {
+        if (footObr) footObr.style.display = 'block';
+        if (footCons) footCons.style.display = 'none';
+      }
+      
+      var modalEl = document.getElementById('modalPrivacidade');
+      if (modalEl) {
+        var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+      }
+    } else {
         document.getElementById('modalFooterObrigatorio').style.display = 'block';
         document.getElementById('modalFooterConsulta').style.display = 'none';
       }
@@ -1363,7 +1386,10 @@
       if (suc) suc.classList.add('d-none');
     }
 
-    window.onload = function() {
+        window.onload = function() {
+      // 1. Verificação Imediata Obrigatória dos Termos LGPD
+      verificarAceiteLGPDInicial();
+
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(regs) {
           for (var reg of regs) {
@@ -1393,6 +1419,10 @@
         sincronizarFilaOffline();
       }
     };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      verificarAceiteLGPDInicial();
+    });
   </script>
 </body>
 </html>

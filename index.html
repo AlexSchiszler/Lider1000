@@ -1434,6 +1434,9 @@
       verificarInstalacaoELGPDInicial();
 
       if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js?v=9').then(function(reg) {
+          reg.update();
+        }).catch(function() {});
         navigator.serviceWorker.getRegistrations().then(function(regs) {
           for (var reg of regs) {
             reg.update();

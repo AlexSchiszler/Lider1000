@@ -485,12 +485,54 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-    // ENDPOINT OFICIAL DO GOOGLE APPS SCRIPT
+        // ENDPOINT OFICIAL DO GOOGLE APPS SCRIPT
     var API_URL = "https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec";
 
-    // MOTOR JSONP CROSS-ORIGIN ROBUSTO COM TIMEOUT E TRATAMENTO
+    // MOTOR HÍBRIDO DUPLO (FETCH DIRETO + FALLBACK AUTOMÁTICO JSONP)
     var jsonpContador = 0;
+
     function chamarApiGoogle(params, callbackSucesso, callbackErro) {
+      var queryString = Object.keys(params).map(function(k) {
+        return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
+      }).join('&');
+
+      var finalizado = false;
+      function responderSucesso(res) {
+        if (!finalizado) {
+          finalizado = true;
+          if (callbackSucesso) callbackSucesso(res);
+        }
+      }
+      function responderErro(err) {
+        if (!finalizado) {
+          finalizado = true;
+          if (callbackErro) callbackErro(err);
+        }
+      }
+
+      // Tentativa 1: Fetch com timeout de 6s
+      if (window.fetch) {
+        var controller = new AbortController();
+        var timerAbort = setTimeout(function() { controller.abort(); }, 6000);
+
+        fetch(API_URL + '?' + queryString, { method: 'GET', signal: controller.signal })
+          .then(function(res) {
+            clearTimeout(timerAbort);
+            return res.json();
+          })
+          .then(function(dados) {
+            responderSucesso(dados);
+          })
+          .catch(function() {
+            clearTimeout(timerAbort);
+            executarJsonp(params, responderSucesso, responderErro);
+          });
+      } else {
+        executarJsonp(params, responderSucesso, responderErro);
+      }
+    }
+
+    function executarJsonp(params, callbackSucesso, callbackErro) {
       var callbackNome = 'callbackJsonp_' + (++jsonpContador) + '_' + Date.now();
       params.callback = callbackNome;
 
@@ -508,7 +550,7 @@
           if (script.parentNode) script.parentNode.removeChild(script);
           if (callbackErro) callbackErro(new Error("Tempo limite de conexão excedido."));
         }
-      }, 15000);
+      }, 10000);
 
       window[callbackNome] = function(resposta) {
         clearTimeout(timerLimite);

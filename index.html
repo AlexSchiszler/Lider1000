@@ -214,16 +214,20 @@
     </div>
 
     <!-- TELA 1: IDENTIFICAÇÃO POR TELEFONE (LOGIN) -->
-    <div id="secaoLogin" class="form-card">
-      <h5 class="fw-bold mb-2"><i class="bi bi-phone-vibrate-fill me-2 text-primary"></i>Acesso do Líder</h5>
+    <div id="secaoLogin" class="form-card shadow-sm">
+      <h5 class="fw-bold mb-2 text-primary"><i class="bi bi-phone-vibrate-fill me-2"></i>Acesso do Líder</h5>
       <p class="text-muted small mb-3">Digite seu número de WhatsApp com DDD para acessar seu painel.</p>
+
+      <div id="alertaErroLogin" class="alert alert-danger py-2 px-3 small d-none mb-3" style="border-radius: 10px;">
+        <i class="bi bi-exclamation-triangle-fill me-2 fs-6"></i><span id="msgErroLogin"></span>
+      </div>
 
       <form id="formLogin" onsubmit="event.preventDefault(); processarIdentificacao(); return false;">
         <div class="mb-3">
           <label class="form-label">Telefone / WhatsApp <span class="badge-required">*</span></label>
           <input type="tel" class="form-control form-control-lg" id="login_telefone" placeholder="(11) 99999-9999" required>
         </div>
-        <button type="button" class="btn-submit" id="btnAvancarLogin" onclick="processarIdentificacao()">
+        <button type="button" class="btn-submit py-3 fw-bold" id="btnAvancarLogin" onclick="processarIdentificacao()">
           <span id="btnTxtLogin"><i class="bi bi-arrow-right-circle me-2"></i>Acessar Painel</span>
           <span id="btnSpinLogin" class="spinner-border spinner-border-sm d-none"></span>
         </button>
@@ -1428,10 +1432,16 @@
     }
 
     function mostrarErro(msg) {
-      var box = document.getElementById('alertaErro') || document.getElementById('msgAlerta');
-      var span = document.getElementById('msgErro') || document.getElementById('msgAlerta');
+      var box = document.getElementById('alertaErro');
+      var span = document.getElementById('msgErro');
       if (span) span.textContent = msg;
       if (box) box.classList.remove('d-none');
+
+      var boxLogin = document.getElementById('alertaErroLogin');
+      var spanLogin = document.getElementById('msgErroLogin');
+      if (spanLogin) spanLogin.textContent = msg;
+      if (boxLogin) boxLogin.classList.remove('d-none');
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -1444,10 +1454,12 @@
     }
 
     function esconderAlertas() {
-      var err = document.getElementById('alertaErro') || document.getElementById('msgAlerta');
-      var suc = document.getElementById('alertaSucesso') || document.getElementById('msgSucesso');
+      var err = document.getElementById('alertaErro');
+      var suc = document.getElementById('alertaSucesso');
+      var errLog = document.getElementById('alertaErroLogin');
       if (err) err.classList.add('d-none');
       if (suc) suc.classList.add('d-none');
+      if (errLog) errLog.classList.add('d-none');
     }
 
         window.onload = function() {

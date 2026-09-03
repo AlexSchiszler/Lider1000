@@ -188,6 +188,18 @@
       align-items: center;
       gap: 5px;
     }
+
+    /* Destrava cliques e previne backdrops fantasmas */
+    .modal-backdrop {
+      z-index: 1040 !important;
+    }
+    .modal {
+      z-index: 1050 !important;
+    }
+    body:not(.modal-open) .modal-backdrop {
+      display: none !important;
+      pointer-events: none !important;
+    }
   </style>
 </head>
 <body>
@@ -573,6 +585,16 @@
       avancarParaLGPD();
     });
 
+        function limparTodosBackdrops() {
+      var backdrops = document.querySelectorAll('.modal-backdrop');
+      for (var i = 0; i < backdrops.length; i++) {
+        backdrops[i].remove();
+      }
+      document.body.classList.remove('modal-open');
+      document.body.style.removeProperty('overflow');
+      document.body.style.removeProperty('padding-right');
+    }
+
     function verificarInstalacaoELGPDInicial() {
       var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone || document.referrer.includes('android-app://');
       var instalacaoIgnorada = localStorage.getItem('campanha_instalacao_passo1_ok');
@@ -581,6 +603,8 @@
       if (isStandalone || instalacaoIgnorada === 'true') {
         if (lgpdAceito !== 'true') {
           abrirModalLGPDObrigatorio();
+        } else {
+          limparTodosBackdrops();
         }
       } else {
         abrirModalInstalacao();
@@ -588,6 +612,7 @@
     }
 
     function abrirModalInstalacao() {
+      limparTodosBackdrops();
       var modalInstEl = document.getElementById('modalInstalarApp');
       if (modalInstEl) {
         var modal = bootstrap.Modal.getOrCreateInstance(modalInstEl, {
@@ -609,12 +634,12 @@
         deferredPrompt.prompt();
         deferredPrompt.userChoice.then(function() {
           deferredPrompt = null;
-          setTimeout(avancarParaLGPD, 500);
+          setTimeout(avancarParaLGPD, 400);
         }).catch(function() {
-          setTimeout(avancarParaLGPD, 500);
+          setTimeout(avancarParaLGPD, 400);
         });
       } else {
-        setTimeout(avancarParaLGPD, 600);
+        setTimeout(avancarParaLGPD, 400);
       }
     }
 
@@ -622,19 +647,23 @@
       localStorage.setItem('campanha_instalacao_passo1_ok', 'true');
       var modalInstEl = document.getElementById('modalInstalarApp');
       if (modalInstEl) {
-        var modalInst = bootstrap.Modal.getInstance(modalInstEl);
-        if (modalInst) modalInst.hide();
+        try {
+          var modalInst = bootstrap.Modal.getInstance(modalInstEl) || bootstrap.Modal.getOrCreateInstance(modalInstEl);
+          if (modalInst) modalInst.hide();
+        } catch(e) {}
       }
+      limparTodosBackdrops();
 
       var lgpdAceito = localStorage.getItem('campanha_termos_gerais_aceitos');
       if (lgpdAceito !== 'true') {
         setTimeout(function() {
           abrirModalLGPDObrigatorio();
-        }, 400);
+        }, 250);
       }
     }
 
-        function abrirModalLGPDObrigatorio() {
+    function abrirModalLGPDObrigatorio() {
+      limparTodosBackdrops();
       var xBtn = document.getElementById('modalBtnFecharX');
       var footObr = document.getElementById('modalFooterObrigatorio');
       var footCons = document.getElementById('modalFooterConsulta');
@@ -642,7 +671,6 @@
       if (footObr) footObr.style.display = 'block';
       if (footCons) footCons.style.display = 'none';
 
-      // Regra 3: Se é nova instalação/novo acesso, garante que o botão está habilitado
       var btn = document.getElementById('btnAceitarLGPD');
       if (btn) {
         btn.disabled = false;
@@ -661,7 +689,6 @@
     }
 
     function aceitarTermosLGPD() {
-      // Regra 2: Desabilita o botão após o aceite
       localStorage.setItem('campanha_termos_gerais_aceitos', 'true');
       var btn = document.getElementById('btnAceitarLGPD');
       if (btn) {
@@ -670,22 +697,26 @@
         btn.innerHTML = '<i class="bi bi-check-all me-2"></i> Termos Aceitos!';
       }
 
-      // Regra 1: Fecha a janela e libera imediatamente o painel de login
-      setTimeout(function() {
-        var modalEl = document.getElementById('modalPrivacidade');
-        if (modalEl) {
-          var modal = bootstrap.Modal.getInstance(modalEl);
+      var modalEl = document.getElementById('modalPrivacidade');
+      if (modalEl) {
+        try {
+          var modal = bootstrap.Modal.getInstance(modalEl) || bootstrap.Modal.getOrCreateInstance(modalEl);
           if (modal) modal.hide();
-        }
-        // Foca no campo de telefone para acesso imediato
+        } catch(e) {}
+      }
+
+      // Limpeza imediata e completa do backdrop para liberar cliques 100%
+      setTimeout(function() {
+        limparTodosBackdrops();
         var telInput = document.getElementById('login_telefone');
         if (telInput) {
           telInput.focus();
         }
-      }, 350);
+      }, 200);
     }
 
     function abrirModalPrivacidadeConsulta() {
+      limparTodosBackdrops();
       var aceito = localStorage.getItem('campanha_termos_gerais_aceitos');
       var xBtn = document.getElementById('modalBtnFecharX');
       var footObr = document.getElementById('modalFooterObrigatorio');
@@ -697,6 +728,22 @@
         if (footObr) footObr.style.display = 'none';
         if (footCons) footCons.style.display = 'flex';
       } else {
+        if (footObr) footObr.style.display = 'block';
+        if (footCons) footCons.style.display = 'none';
+        var btn = document.getElementById('btnAceitarLGPD');
+        if (btn) {
+          btn.disabled = false;
+          btn.className = 'btn btn-success w-100 py-3 fw-bold shadow-sm';
+          btn.innerHTML = '<i class="bi bi-check2-circle me-2 fs-5"></i> Li e Concordo';
+        }
+      }
+      
+      var modalEl = document.getElementById('modalPrivacidade');
+      if (modalEl) {
+        var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+      }
+    } else {
         if (footObr) footObr.style.display = 'block';
         if (footCons) footCons.style.display = 'none';
         var btn = document.getElementById('btnAceitarLGPD');

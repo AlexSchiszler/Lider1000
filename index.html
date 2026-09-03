@@ -500,6 +500,15 @@
                 // ENDPOINT OFICIAL DO GOOGLE APPS SCRIPT
     var API_URL = "https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec";
 
+    // FUNÇÃO OFICIAL PARA OBTER DATA LOCAL ATUAL (FORMATO YYYY-MM-DD PARA INPUT DATE)
+    function obterDataLocalHoje() {
+      var d = new Date();
+      var ano = d.getFullYear();
+      var mes = ('0' + (d.getMonth() + 1)).slice(-2);
+      var dia = ('0' + d.getDate()).slice(-2);
+      return ano + '-' + mes + '-' + dia;
+    }
+
     // FUNÇÃO OFICIAL DE NORMALIZAÇÃO DE TEXTO (IGNORA ACENTOS E MAIÚSCULAS)
     function normalizarTexto(txt) {
       return (txt || "").toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();

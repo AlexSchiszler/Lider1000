@@ -743,22 +743,6 @@
         var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
         modal.show();
       }
-    } else {
-        if (footObr) footObr.style.display = 'block';
-        if (footCons) footCons.style.display = 'none';
-        var btn = document.getElementById('btnAceitarLGPD');
-        if (btn) {
-          btn.disabled = false;
-          btn.className = 'btn btn-success w-100 py-3 fw-bold shadow-sm';
-          btn.innerHTML = '<i class="bi bi-check2-circle me-2 fs-5"></i> Li e Concordo';
-        }
-      }
-      
-      var modalEl = document.getElementById('modalPrivacidade');
-      if (modalEl) {
-        var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-        modal.show();
-      }
     }
 
     /* ====== MOTOR OFFLINE & FILA LOCAL COM TRAVA ATÔMICA ====== */

@@ -401,7 +401,44 @@
 
   </div>
 
-  <!-- MODAL LGPD (OBRIGATÓRIO NA PRIMEIRA VEZ) -->
+    <!-- MODAL 1: INSTALAÇÃO DO APP (PRIMEIRO PASSO ANTES DA LGPD) -->
+  <div class="modal fade" id="modalInstalarApp" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content shadow-lg" style="border-radius: 20px; border: none; overflow: hidden;">
+        <div class="modal-header bg-primary text-white py-3">
+          <h5 class="modal-title fw-bold d-flex align-items-center mb-0" style="font-size: 17px;">
+            <i class="bi bi-phone-fill me-2 fs-4"></i>
+            Passo 1 de 2: Instalar o Aplicativo
+          </h5>
+        </div>
+        <div class="modal-body p-4 text-center">
+          <div class="mb-3">
+            <div class="d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle shadow-sm" style="width: 72px; height: 72px;">
+              <i class="bi bi-download fs-1"></i>
+            </div>
+          </div>
+          <h6 class="fw-bold text-dark mb-2">Instale o Liderança 1000 no seu celular</h6>
+          <p class="text-muted small mb-3">
+            Para garantir o funcionamento <strong>100% offline</strong> sem depender de sinal de internet, instale o aplicativo na tela inicial do seu celular.
+          </p>
+
+          <button type="button" class="btn btn-primary btn-lg w-100 py-3 fw-bold shadow mb-3" id="btnDispararInstalacao" onclick="executarInstalacaoPWA()" style="border-radius: 12px; font-size: 16px;">
+            <i class="bi bi-cloud-arrow-down-fill me-2"></i> Instalar Aplicativo Agora
+          </button>
+
+          <div class="alert alert-light border py-2 px-3 text-start small mb-3 text-muted" style="border-radius: 10px; font-size: 11.5px; line-height: 1.4;">
+            <strong>💡 Não abriu a caixa do Android?</strong> Toque no menu de <strong>3 pontinhos (⋮)</strong> no topo do seu navegador e escolha <strong>"Instalar aplicativo"</strong> ou <strong>"Adicionar à tela inicial"</strong>.
+          </div>
+
+          <button type="button" class="btn btn-link text-decoration-none text-secondary btn-sm fw-semibold" onclick="avancarParaLGPD()">
+            Já instalei ou desejo prosseguir ➔
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- MODAL LGPD (OBRIGATÓRIO NA PRIMEIRA VEZ) -->
   <div class="modal fade" id="modalPrivacidade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content shadow-lg" style="border-radius: 18px; border: 1px solid rgba(0,0,0,0.1);">
@@ -445,274 +482,105 @@
 
   <script>
     // ENDPOINT OFICIAL DO GOOGLE APPS SCRIPT
-    var deferredPrompt = null;
+        var deferredPrompt = null;
+    var appJaInstalado = false;
+
     window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
       deferredPrompt = e;
+      console.log("PWA beforeinstallprompt capturado com sucesso.");
     });
 
-    var API_URL = "https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec";
+    window.addEventListener('appinstalled', function() {
+      appJaInstalado = true;
+      deferredPrompt = null;
+      console.log("PWA instalado com sucesso!");
+      avancarParaLGPD();
+    });
 
-    // REGISTRO DO SERVICE WORKER NATIVO
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('./sw.js').catch(function(){});
-      });
-    }
+    function verificarInstalacaoELGPDInicial() {
+      var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone || document.referrer.includes('android-app://');
+      var instalacaoIgnorada = localStorage.getItem('campanha_instalacao_passo1_ok');
+      var lgpdAceito = localStorage.getItem('campanha_termos_gerais_aceitos');
 
-    var listaCidadesIBGE = ["Adamantina", "Adolfo", "Aguaí", "Águas da Prata", "Águas de Lindóia", "Águas de Santa Bárbara", "Águas de São Pedro", "Agudos", "Alambari", "Alfredo Marcondes", "Altair", "Altinópolis", "Alto Alegre", "Alumínio", "Álvares Florence", "Álvares Machado", "Álvaro de Carvalho", "Alvinlândia", "Americana", "Américo Brasiliense", "Américo de Campos", "Amparo", "Analândia", "Andradina", "Angatuba", "Anhembi", "Anhumas", "Aparecida", "Aparecida d'Oeste", "Apiaí", "Araçariguama", "Araçatuba", "Araçoiaba da Serra", "Aramina", "Arandu", "Arapeí", "Araraquara", "Araras", "Arco-Íris", "Arealva", "Areias", "Areiópolis", "Ariranha", "Artur Nogueira", "Arujá", "Aspásia", "Assis", "Atibaia", "Auriflama", "Avaí", "Avanhandava", "Avaré", "Bady Bassitt", "Balbinos", "Bálsamo", "Bananal", "Barão de Antonina", "Barbosa", "Bariri", "Barra Bonita", "Barra do Chapéu", "Barra do Turvo", "Barretos", "Barrinha", "Barueri", "Bastos", "Batatais", "Bauru", "Bebedouro", "Bento de Abreu", "Bernardino de Campos", "Bertioga", "Bilac", "Birigui", "Biritiba Mirim", "Boa Esperança do Sul", "Bocaina", "Bofete", "Boituva", "Bom Jesus dos Perdões", "Bom Sucesso de Itararé", "Borá", "Boracéia", "Borborema", "Borebi", "Botucatu", "Bragança Paulista", "Braúna", "Brejo Alegre", "Brodowski", "Brotas", "Buri", "Buritama", "Buritizal", "Cabrália Paulista", "Cabreúva", "Caçapava", "Cachoeira Paulista", "Caconde", "Cafelândia", "Caiabu", "Caieiras", "Caiuá", "Cajamar", "Cajati", "Cajobi", "Cajuru", "Campina do Monte Alegre", "Campinas", "Campo Limpo Paulista", "Campos do Jordão", "Campos Novos Paulista", "Cananéia", "Canas", "Cândido Mota", "Cândido Rodrigues", "Canitar", "Capão Bonito", "Capela do Alto", "Capivari", "Caraguatatuba", "Carapicuíba", "Cardoso", "Casa Branca", "Cássia dos Coqueiros", "Castilho", "Catanduva", "Catiguá", "Cedral", "Cerqueira César", "Cerquilho", "Cesário Lange", "Charqueada", "Chavantes", "Clementina", "Colina", "Colômbia", "Conchal", "Conchas", "Cordeirópolis", "Coroados", "Coronel Macedo", "Corumbataí", "Cosmópolis", "Cosmorama", "Cotia", "Cravinhos", "Cristais Paulista", "Cruzália", "Cruzeiro", "Cubatão", "Cunha", "Descalvado", "Diadema", "Dirce Reis", "Divinolândia", "Dobrada", "Dois Córregos", "Dolcinópolis", "Dourado", "Dracena", "Duartina", "Dumont", "Echaporã", "Eldorado", "Elias Fausto", "Elisiário", "Embaúba", "Embu das Artes", "Embu-Guaçu", "Emilianópolis", "Engenheiro Coelho", "Espírito Santo do Pinhal", "Espírito Santo do Turvo", "Estiva Gerbi", "Estrela d'Oeste", "Estrela do Norte", "Euclides da Cunha Paulista", "Fartura", "Fernando Prestes", "Fernandópolis", "Fernão", "Ferraz de Vasconcelos", "Flora Rica", "Floreal", "Flórida Paulista", "Florínea", "Franca", "Francisco Morato", "Franco da Rocha", "Gabriel Monteiro", "Gália", "Garça", "Gastão Vidigal", "Gavião Peixoto", "General Salgado", "Getulina", "Glicério", "Guaiçara", "Guaimbê", "Guaíra", "Guapiaçu", "Guapiara", "Guará", "Guaraçaí", "Guaraci", "Guarani d'Oeste", "Guarantã", "Guararapes", "Guararema", "Guaratinguetá", "Guareí", "Guariba", "Guarujá", "Guarulhos", "Guatapará", "Guzolândia", "Herculândia", "Holambra", "Hortolândia", "Iacanga", "Iacri", "Iaras", "Ibaté", "Ibirá", "Ibirarema", "Ibitinga", "Ibiúna", "Icém", "Iepê", "Igaraçu do Tietê", "Igarapava", "Igaratá", "Iguape", "Ilha Comprida", "Ilha Solteira", "Ilhabela", "Indaiatuba", "Indiana", "Indiaporã", "Inúbia Paulista", "Ipaussu", "Iperó", "Ipeúna", "Ipiguá", "Iporanga", "Ipuã", "Iracemápolis", "Irapuã", "Irapuru", "Itaberá", "Itaí", "Itajobi", "Itaju", "Itanhaém", "Itaóca", "Itapecerica da Serra", "Itapetininga", "Itapeva", "Itapevi", "Itapira", "Itapirapuã Paulista", "Itápolis", "Itaporanga", "Itapuí", "Itapura", "Itaquaquecetuba", "Itararé", "Itariri", "Itatiba", "Itatinga", "Itirapina", "Itirapuã", "Itobi", "Itu", "Itupeva", "Ituverava", "Jaborandi", "Jaboticabal", "Jacareí", "Jaci", "Jacupiranga", "Jaguariúna", "Jales", "Jambeiro", "Jandira", "Jardinópolis", "Jarinu", "Jaú", "Jeriquara", "Joanópolis", "João Ramalho", "José Bonifácio", "Júlio Mesquita", "Jumirim", "Jundiaí", "Junqueirópolis", "Juquiá", "Juquitiba", "Lagoinha", "Laranjal Paulista", "Lavínia", "Lavrinhas", "Leme", "Lençóis Paulista", "Limeira", "Lindóia", "Lins", "Lorena", "Lourdes", "Louveira", "Lucélia", "Lucianópolis", "Luís Antônio", "Luiziânia", "Lupércio", "Lutécia", "Macatuba", "Macaubal", "Macedônia", "Magda", "Mairinque", "Mairiporã", "Manduri", "Marabá Paulista", "Maracaí", "Marapoama", "Mariápolis", "Marília", "Marinópolis", "Martinópolis", "Matão", "Mauá", "Mendonça", "Meridiano", "Mesópolis", "Miguelópolis", "Mineiros do Tietê", "Mira Estrela", "Miracatu", "Mirandópolis", "Mirante do Paranapanema", "Mirassol", "Mirassolândia", "Mococa", "Mogi das Cruzes", "Mogi Guaçu", "Mogi Mirim", "Mombuca", "Monções", "Mongaguá", "Monte Alegre do Sul", "Monte Alto", "Monte Aprazível", "Monte Azul Paulista", "Monte Castelo", "Monte Mor", "Monteiro Lobato", "Morro Agudo", "Morungaba", "Motuca", "Murutinga do Sul", "Nantes", "Narandiba", "Natividade da Serra", "Nazaré Paulista", "Neves Paulista", "Nhandeara", "Nipoã", "Nova Aliança", "Nova Campina", "Nova Canaã Paulista", "Nova Castilho", "Nova Europa", "Nova Granada", "Nova Guataporanga", "Nova Independência", "Nova Luzitânia", "Nova Odessa", "Novais", "Novo Horizonte", "Nuporanga", "Ocauçu", "Óleo", "Olímpia", "Onda Verde", "Oriente", "Orindiúva", "Orlândia", "Osasco", "Oscar Bressane", "Osvaldo Cruz", "Ourinhos", "Ouro Verde", "Ouroeste", "Pacaembu", "Palestina", "Palmares Paulista", "Palmeira d'Oeste", "Palmital", "Panorama", "Paraguaçu Paulista", "Paraibuna", "Paraíso", "Paranapanema", "Paranapuã", "Parapuã", "Pardinho", "Pariquera-Açu", "Parisi", "Patrocínio Paulista", "Paulicéia", "Paulínia", "Paulistânia", "Paulo de Faria", "Pederneiras", "Pedra Bela", "Pedranópolis", "Pedregulho", "Pedreira", "Pedrinhas Paulista", "Pedro de Toledo", "Penápolis", "Pereira Barreto", "Pereiras", "Peruíbe", "Piacatu", "Piedade", "Pilar do Sul", "Pindamonhangaba", "Pindorama", "Pinhalzinho", "Piquerobi", "Piquete", "Piracaia", "Piracicaba", "Piraju", "Pirajuí", "Pirangi", "Pirapora do Bom Jesus", "Pirapozinho", "Pirassununga", "Piratininga", "Pitangueiras", "Planalto", "Platina", "Poá", "Poloni", "Pompéia", "Pongaí", "Pontal", "Pontalinda", "Pontes Gestal", "Populina", "Porangaba", "Porto Feliz", "Porto Ferreira", "Potim", "Potirendaba", "Pracinha", "Pradópolis", "Praia Grande", "Pratânia", "Presidente Alves", "Presidente Bernardes", "Presidente Epitácio", "Presidente Prudente", "Presidente Venceslau", "Promissão", "Quadra", "Quatá", "Queiroz", "Queluz", "Quintana", "Rafard", "Rancharia", "Redenção da Serra", "Regente Feijó", "Reginópolis", "Registro", "Restinga", "Ribeira", "Ribeirão Bonito", "Ribeirão Branco", "Ribeirão Corrente", "Ribeirão do Sul", "Ribeirão dos Índios", "Ribeirão Grande", "Ribeirão Pires", "Ribeirão Preto", "Rifaina", "Rincão", "Rinópolis", "Rio Claro", "Rio das Pedras", "Rio Grande da Serra", "Riolândia", "Riversul", "Rosana", "Roseira", "Rubiácea", "Rubinéia", "Sabino", "Sagres", "Sales", "Sales Oliveira", "Salesópolis", "Salmourão", "Saltinho", "Salto", "Salto de Pirapora", "Salto Grande", "Sandovalina", "Santa Adélia", "Santa Albertina", "Santa Bárbara d'Oeste", "Santa Branca", "Santa Clara d'Oeste", "Santa Cruz da Conceição", "Santa Cruz da Esperança", "Santa Cruz das Palmeiras", "Santa Cruz do Rio Pardo", "Santa Ernestina", "Santa Fé do Sul", "Santa Gertrudes", "Santa Isabel", "Santa Lúcia", "Santa Maria da Serra", "Santa Mercedes", "Santa Rita d'Oeste", "Santa Rita do Passa Quatro", "Santa Rosa de Viterbo", "Santa Salete", "Santana da Ponte Pensa", "Santana de Parnaíba", "Santo Anastácio", "Santo André", "Santo Antônio da Alegria", "Santo Antônio de Posse", "Santo Antônio do Aracanguá", "Santo Antônio do Jardim", "Santo Antônio do Pinhal", "Santo Expedito", "Santópolis do Aguapeí", "Santos", "São Bento do Sapucaí", "São Bernardo do Campo", "São Caetano do Sul", "São Carlos", "São Francisco", "São João da Boa Vista", "São João das Duas Pontes", "São João de Iracema", "São João do Pau d'Alho", "São Joaquim da Barra", "São José da Bela Vista", "São José do Barreiro", "São José do Rio Pardo", "São José do Rio Preto", "São José dos Campos", "São Lourenço da Serra", "São Luíz do Paraitinga", "São Manuel", "São Miguel Arcanjo", "São Paulo", "São Pedro", "São Pedro do Turvo", "São Roque", "São Sebastião", "São Sebastião da Grama", "São Simão", "São Vicente", "Sarapuí", "Sarutaiá", "Sebastianópolis do Sul", "Serra Azul", "Serra Negra", "Serrana", "Sertãozinho", "Sete Barras", "Severínia", "Silveiras", "Socorro", "Sorocaba", "Sud Mennucci", "Sumaré", "Suzanápolis", "Suzano", "Tabapuã", "Tabatinga", "Taboão da Serra", "Taciba", "Taguaí", "Taiaçu", "Taiúva", "Tambaú", "Tanabi", "Tapiraí", "Tapiratiba", "Taquaral", "Taquaritinga", "Taquarituba", "Taquarivaí", "Tarabai", "Tarumã", "Tatuí", "Taubaté", "Tejupá", "Teodoro Sampaio", "Terra Roxa", "Tietê", "Timburi", "Torre de Pedra", "Torrinha", "Trabiju", "Tremembé", "Três Fronteiras", "Tuiuti", "Tupã", "Tupi Paulista", "Turiúba", "Turmalina", "Ubarana", "Ubatuba", "Ubirajara", "Uchoa", "União Paulista", "Urânia", "Uru", "Urupês", "Valentim Gentil", "Valinhos", "Valparaíso", "Vargem", "Vargem Grande do Sul", "Vargem Grande Paulista", "Várzea Paulista", "Vera Cruz", "Vinhedo", "Viradouro", "Vista Alegre do Alto", "Vitória Brasil", "Votorantim", "Votuporanga", "Zacarias"];
-
-    var BASE_OFICIAL_BAIRROS_SP = {
-      "mogi das cruzes": ["Alto Ipiranga", "Alto da Boa Vista", "Biritiba-Ussu", "Botujuru", "Brás Cubas", "Centro", "Centro Cívico", "Cezar de Souza", "Chácara Jafet", "Conjunto Alvorada", "Conjunto do Bosque", "Conjunto Santo Ângelo", "Jardim Aeroporto III", "Jardim Bela Vista", "Jardim Camila", "Jardim Esperança", "Jardim Layr", "Jardim Maricá", "Jardim Santista", "Jardim Universo", "Jundiapeba", "Mogi Moderno", "Mogilar", "Parque Monte Líbano", "Ponte Grande", "Quatinga", "Rodeio", "Sabaúna", "Socorro", "Taiaçupeba", "Vila Cintra", "Vila da Prata", "Vila Industrial", "Vila Lavínia", "Vila Moraes", "Vila Natal", "Vila Nova Cintra", "Vila Nova Mogilar", "Vila Oliveira", "Vila Paulista", "Vila Rubens", "Vila Suíssa", "Vila São Francisco"],
-      "suzano": ["Centro", "Boa Vista", "Boa Vista Paulista", "Cidade Edson", "Jardim Casa Branca", "Jardim Colorado", "Jardim Fernandes", "Jardim Imperador", "Jardim Natal", "Jardim Quaresmeira", "Jardim Suzanópolis", "Jardim Vitória", "Miguel Badra", "Palmeiras", "Palmeiras de São Paulo", "Parque Maria Helena", "Vila Amorim", "Vila Figueira", "Vila Sol Nascente"],
-      "poa": ["Centro", "Calmon Viana", "Cidade Kemel", "Jardim Débora", "Jardim Ivonete", "Jardim Medina", "Jardim Nova Poá", "Vila Açoreana", "Vila Perracini", "Vila Santa Helena", "Vila Varela"],
-      "itaquaquecetuba": ["Centro", "Aracaré", "Jardim Caiuby", "Jardim Lucinda", "Jardim Odete", "Jardim Paineira", "Manoel Feio", "Monte Belo", "Parque Marengo", "Pirapora", "Vila Japão", "Vila Virginia"],
-      "ferraz de vasconcelos": ["Centro", "Cambiri", "Jardim Castelo", "Jardim Dayse", "Jardim São João", "Parque São Francisco", "Santa Margarida Paulista", "Santo Antônio Paulista", "Vila Jamil", "Vila Margarida", "Vila Romanópolis", "Vila Santo Antônio"],
-      "aruja": ["Centro", "Arujamérica", "Caputera", "Jardim Fazenda Rincão", "Jardim Rincão", "Jordanópolis", "Mirante", "Parque Rodrigo Barreto", "Vila Pedroso"],
-      "santa isabel": ["Centro", "Brotas", "Jardim Eldorado", "Jardim Novo Éden", "Lanifício", "Monte Serrat", "Parque São Benedito", "Treze de Maio", "Vila Guilherme"],
-      "guarulhos": ["Centro", "Bela Vista", "Bonsucesso", "Cumbica", "Gopouva", "Invernada", "Jardim Presidente Dutra", "Jardim Tranquilidade", "Macedo", "Monte Carmelo", "Pimentas", "Presidente Dutra", "São João", "Taboão", "Vila Augusta", "Vila Galvão"],
-      "sao paulo": ["Alto de Pinheiros", "Anhanguera", "Aricanduva", "Artur Alvim", "Barra Funda", "Bela Vista", "Belém", "Bom Retiro", "Brasilândia", "Brás", "Butantã", "Cachoeirinha", "Cambuci", "Campo Belo", "Campo Grande", "Campo Limpo", "Cangaiba", "Capão Redondo", "Carrão", "Casa Verde", "Centro", "Cidade Ademar", "Cidade Dutra", "Cidade Lider", "Cidade Tiradentes", "Consolação", "Cursino", "Ermelino Matarazzo", "Freguesia do Ó", "Grajaú", "Guaianases", "Iguatemi", "Ipiranga", "Itaim Bibi", "Itaim Paulista", "Itaquera", "Jabaquara", "Jaguara", "Jaguaré", "Jaraguá", "Jardim Helena", "Jardim Paulista", "Jardim São Luís", "Jardim Ângela", "Jaçanã", "José Bonifácio", "Lajeado", "Lapa", "Liberdade", "Limão", "Mandaqui", "Marsilac", "Moema", "Mooca", "Morumbi", "Parelheiros", "Pari", "Parque do Carmo", "Pedreira", "Penha", "Perdizes", "Perus", "Pinheiros", "Pirituba", "Ponte Rasa", "Raposo Tavares", "República", "Rio Pequeno", "Sacomã", "Santa Cecília", "Santana", "Santo Amaro", "Sapopemba", "Saúde", "Socorro", "São Domingos", "São Lucas", "São Mateus", "São Miguel", "São Rafael", "Sé", "Tatuapé", "Tremembé", "Tucuruvi", "Vila Andrade", "Vila Curuçá", "Vila Formosa", "Vila Guilherme", "Vila Jacuí", "Vila Leopoldina", "Vila Maria", "Vila Mariana", "Vila Matilde", "Vila Medeiros", "Vila Prudente", "Vila Sônia", "Água Rasa"]
-    };
-
-    var dadosLiderLogado = null;
-    var cidadeAtivaMemoria = '';
-    var bairrosCidadeAtiva = [];
-    var timerBuscaBairros = null;
-    var telefonePendenteCadastro = '';
-    var modalPrivacidadeObj = null;
-    var sincronizandoFila = false;
-
-    function normalizarTexto(txt) {
-      return (txt || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
-    }
-
-    function obterDataLocalHoje() {
-      var d = new Date();
-      var ano = d.getFullYear();
-      var mes = String(d.getMonth() + 1).padStart(2, '0');
-      var dia = String(d.getDate()).padStart(2, '0');
-      return ano + '-' + mes + '-' + dia;
-    }
-
-    function obterOuCriarDeviceId() {
-      var chave = 'campanha_device_id';
-      var devId = localStorage.getItem(chave);
-      if (!devId) {
-        devId = 'DEV_' + Math.random().toString(36).substring(2, 12) + '_' + Date.now();
-        localStorage.setItem(chave, devId);
-      }
-      return devId;
-    }
-
-    /* ====== COMUNICAÇÃO ROBUSTA 100% SEM BLOQUEIO DE CORS (JSONP) ====== */
-    function chamarApiGoogle(parametros, callbackSucesso, callbackErro) {
-      if (!navigator.onLine) {
-        if (callbackErro) callbackErro(new Error("Dispositivo offline"));
-        return;
-      }
-
-      var callbackName = 'jsonp_cb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
-      parametros.callback = callbackName;
-
-      var script = document.createElement('script');
-      var timeoutId = null;
-
-      window[callbackName] = function(dados) {
-        clearTimeout(timeoutId);
-        if (script.parentNode) script.parentNode.removeChild(script);
-        try { delete window[callbackName]; } catch(e) {}
-        if (callbackSucesso) callbackSucesso(dados);
-      };
-
-      timeoutId = setTimeout(function() {
-        if (script.parentNode) script.parentNode.removeChild(script);
-        try { delete window[callbackName]; } catch(e) {}
-        if (callbackErro) callbackErro(new Error("Tempo limite de conexão esgotado"));
-      }, 15000);
-
-      script.onerror = function() {
-        clearTimeout(timeoutId);
-        if (script.parentNode) script.parentNode.removeChild(script);
-        try { delete window[callbackName]; } catch(e) {}
-        if (callbackErro) callbackErro(new Error("Falha ao comunicar com o servidor"));
-      };
-
-      var queryString = new URLSearchParams(parametros).toString();
-      script.src = API_URL + '?' + queryString;
-      document.body.appendChild(script);
-    }
-
-    /* ====== MOTOR OFFLINE & FILA LOCAL ====== */
-    function obterFilaOffline() {
-      try {
-        var fila = localStorage.getItem('campanha_fila_offline');
-        return fila ? JSON.parse(fila) : [];
-      } catch (e) {
-        return [];
-      }
-    }
-
-    function salvarNaFilaOffline(dadosRelatorio) {
-      var fila = obterFilaOffline();
-      dadosRelatorio.idLocal = 'OFF_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
-      dadosRelatorio.dataCriacaoLocal = new Date().toISOString();
-      fila.unshift(dadosRelatorio);
-      localStorage.setItem('campanha_fila_offline', JSON.stringify(fila));
-      atualizarBadgeFilaOffline();
-      verificarAceiteLGPDInicial();
-      return dadosRelatorio;
-    }
-
-    function removerDaFilaOffline(idLocal) {
-      var fila = obterFilaOffline();
-      var novaFila = fila.filter(function(item) { return item.idLocal !== idLocal; });
-      localStorage.setItem('campanha_fila_offline', JSON.stringify(novaFila));
-      atualizarBadgeFilaOffline();
-    }
-
-    function atualizarBadgeFilaOffline() {
-      var fila = obterFilaOffline();
-      var badge = document.getElementById('badgeQtdOfflinePendente');
-      if (badge) {
-        if (fila.length > 0) {
-          badge.textContent = fila.length;
-          badge.classList.remove('d-none');
-        } else {
-          badge.classList.add('d-none');
+      // Se já está rodando como app instalado ou já avançou o passo 1
+      if (isStandalone || instalacaoIgnorada === 'true') {
+        if (lgpdAceito !== 'true') {
+          abrirModalLGPDObrigatorio();
         }
-      }
-    }
-
-    function atualizarStatusRedeVisual() {
-      var badge = document.getElementById('badgeStatusRede');
-      if (!badge) return;
-
-      var fila = obterFilaOffline();
-
-      if (!navigator.onLine) {
-        badge.className = 'badge-status-rede bg-warning text-dark shadow-sm';
-        badge.innerHTML = '<i class="bi bi-wifi-off"></i> <span>Offline</span>';
-      } else if (sincronizandoFila) {
-        badge.className = 'badge-status-rede bg-info text-white shadow-sm';
-        badge.innerHTML = '<span class="spinner-border spinner-border-sm" style="width: 10px; height: 10px;"></span> <span>Sincronizando (' + fila.length + ')</span>';
-      } else if (fila.length > 0) {
-        badge.className = 'badge-status-rede bg-primary text-white shadow-sm';
-        badge.innerHTML = '<i class="bi bi-cloud-arrow-up-fill"></i> <span>Pendente (' + fila.length + ')</span>';
       } else {
-        badge.className = 'badge-status-rede bg-success text-white shadow-sm';
-        badge.innerHTML = '<i class="bi bi-wifi"></i> <span>Online</span>';
+        // Exibe PRIMEIRO a tela de instalação
+        abrirModalInstalacao();
       }
     }
 
-    var itensEmTransmissao = {};
-
-    function sincronizarFilaOffline() {
-      if (!navigator.onLine || sincronizandoFila) return;
-      var fila = obterFilaOffline();
-      if (fila.length === 0) {
-        atualizarStatusRedeVisual();
-        return;
-      }
-
-      // Procura o primeiro item que ainda não está em transmissão
-      var itemParaEnviar = null;
-      for (var f = 0; f < fila.length; f++) {
-        if (!itensEmTransmissao[fila[f].idLocal]) {
-          itemParaEnviar = fila[f];
-          break;
-        }
-      }
-
-      if (!itemParaEnviar) return; // Todos os itens já estão sendo transmitidos
-
-      sincronizandoFila = true;
-      itensEmTransmissao[itemParaEnviar.idLocal] = true;
-      atualizarStatusRedeVisual();
-
-      chamarApiGoogle({
-        acao: 'salvarRelatorioDiario',
-        dados: JSON.stringify(itemParaEnviar)
-      }, function(res) {
-        sincronizandoFila = false;
-        delete itensEmTransmissao[itemParaEnviar.idLocal];
-
-        // Se gravou ou se a planilha identificou que já estava gravado: REMOVE IMEDIATAMENTE DA FILA
-        if (res && (res.sucesso || res.duplicadoIgnorado)) {
-          removerDaFilaOffline(itemParaEnviar.idLocal);
-          
-          var restante = obterFilaOffline();
-          atualizarBadgeFilaOffline();
-          atualizarStatusRedeVisual();
-
-          if (restante.length > 0) {
-            setTimeout(sincronizarFilaOffline, 200);
-          } else {
-            mostrarSucesso("✅ Todos os relatórios offline foram transmitidos com sucesso e a pendência foi zerada!");
-            if (document.getElementById('painelHistoricoContainer').style.display !== 'none') {
-              carregarHistoricoTrabalho();
-            }
-          }
-        } else {
-          atualizarStatusRedeVisual();
-        }
-      }, function() {
-        sincronizandoFila = false;
-        delete itensEmTransmissao[itemParaEnviar.idLocal];
-        atualizarStatusRedeVisual();
-      });
-    }
-
-    window.addEventListener('online', function() {
-      atualizarStatusRedeVisual();
-      sincronizarFilaOffline();
-    });
-
-    window.addEventListener('offline', function() {
-      atualizarStatusRedeVisual();
-    });
-
-    setInterval(function() {
-      atualizarStatusRedeVisual();
-      if (navigator.onLine && obterFilaOffline().length > 0 && !sincronizandoFila) {
-        sincronizarFilaOffline();
-      }
-    }, 15000);
-
-    /* ====== FIM MOTOR OFFLINE ====== */
-
-    function carregarCidadesIBGE() {
-      fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados/SP/municipios")
-        .then(function(res) { return res.json(); })
-        .then(function(dados) {
-          if (dados && Array.isArray(dados) && dados.length > 0) {
-            listaCidadesIBGE = dados.map(function(m) { return m.nome; }).sort();
-          }
-        })
-        .catch(function() {});
-    }
-
-        function verificarAceiteLGPDInicial() {
-      var aceito = localStorage.getItem('campanha_termos_gerais_aceitos');
-      if (aceito !== 'true') {
-        var xBtn = document.getElementById('modalBtnFecharX');
-        var footObr = document.getElementById('modalFooterObrigatorio');
-        var footCons = document.getElementById('modalFooterConsulta');
-        if (xBtn) xBtn.style.display = 'none';
-        if (footObr) footObr.style.display = 'block';
-        if (footCons) footCons.style.display = 'none';
-        
-        var modalEl = document.getElementById('modalPrivacidade');
-        if (modalEl) {
-          var modal = bootstrap.Modal.getOrCreateInstance(modalEl, {
-            backdrop: 'static',
-            keyboard: false
-          });
-          modal.show();
-        }
+    function abrirModalInstalacao() {
+      var modalInstEl = document.getElementById('modalInstalarApp');
+      if (modalInstEl) {
+        var modal = bootstrap.Modal.getOrCreateInstance(modalInstEl, {
+          backdrop: 'static',
+          keyboard: false
+        });
+        modal.show();
       }
     }
 
-        function aceitarTermosLGPD() {
+    function executarInstalacaoPWA() {
+      localStorage.setItem('campanha_instalacao_passo1_ok', 'true');
+      var btn = document.getElementById('btnDispararInstalacao');
+      if (btn) {
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Abrindo instalador...';
+      }
+
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function(choiceResult) {
+          deferredPrompt = null;
+          setTimeout(avancarParaLGPD, 500);
+        }).catch(function() {
+          setTimeout(avancarParaLGPD, 500);
+        });
+      } else {
+        // Se o navegador ainda não disparou o evento nativo, avisa e segue para a LGPD
+        setTimeout(avancarParaLGPD, 600);
+      }
+    }
+
+    function avancarParaLGPD() {
+      localStorage.setItem('campanha_instalacao_passo1_ok', 'true');
+      var modalInstEl = document.getElementById('modalInstalarApp');
+      if (modalInstEl) {
+        var modalInst = bootstrap.Modal.getInstance(modalInstEl);
+        if (modalInst) modalInst.hide();
+      }
+
+      var lgpdAceito = localStorage.getItem('campanha_termos_gerais_aceitos');
+      if (lgpdAceito !== 'true') {
+        setTimeout(function() {
+          abrirModalLGPDObrigatorio();
+        }, 400);
+      }
+    }
+
+    function abrirModalLGPDObrigatorio() {
+      var xBtn = document.getElementById('modalBtnFecharX');
+      var footObr = document.getElementById('modalFooterObrigatorio');
+      var footCons = document.getElementById('modalFooterConsulta');
+      if (xBtn) xBtn.style.display = 'none';
+      if (footObr) footObr.style.display = 'block';
+      if (footCons) footCons.style.display = 'none';
+
+      var modalPrivEl = document.getElementById('modalPrivacidade');
+      if (modalPrivEl) {
+        var modalPriv = bootstrap.Modal.getOrCreateInstance(modalPrivEl, {
+          backdrop: 'static',
+          keyboard: false
+        });
+        modalPriv.show();
+      }
+    }
+
+    function aceitarTermosLGPD() {
       localStorage.setItem('campanha_termos_gerais_aceitos', 'true');
       var btn = document.getElementById('btnAceitarLGPD');
       if (btn) {
@@ -721,21 +589,13 @@
         btn.innerHTML = '<i class="bi bi-check-all me-2"></i> Termos Aceitos!';
       }
 
-      // Dispara a instalação do aplicativo na tela inicial
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(function(choiceResult) {
-          deferredPrompt = null;
-        }).catch(function() {});
-      }
-
       setTimeout(function() {
         var modalEl = document.getElementById('modalPrivacidade');
         if (modalEl) {
           var modal = bootstrap.Modal.getInstance(modalEl);
           if (modal) modal.hide();
         }
-      }, 500);
+      }, 400);
     }
 
     function abrirModalPrivacidadeConsulta() {
@@ -750,6 +610,16 @@
         if (footObr) footObr.style.display = 'none';
         if (footCons) footCons.style.display = 'flex';
       } else {
+        if (footObr) footObr.style.display = 'block';
+        if (footCons) footCons.style.display = 'none';
+      }
+      
+      var modalEl = document.getElementById('modalPrivacidade');
+      if (modalEl) {
+        var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+      }
+    } else {
         if (footObr) footObr.style.display = 'block';
         if (footCons) footCons.style.display = 'none';
       }
@@ -1402,7 +1272,7 @@
 
         window.onload = function() {
       // 1. Verificação Imediata Obrigatória dos Termos LGPD
-      verificarAceiteLGPDInicial();
+      verificarInstalacaoELGPDInicial();
 
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -1435,7 +1305,7 @@
     };
 
     document.addEventListener('DOMContentLoaded', function() {
-      verificarAceiteLGPDInicial();
+      verificarInstalacaoELGPDInicial();
     });
   </script>
 </body>

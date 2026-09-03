@@ -518,6 +518,17 @@
                 // ENDPOINT OFICIAL DO GOOGLE APPS SCRIPT
     var API_URL = "https://script.google.com/macros/s/AKfycbzcTqLZpHzaLCSrrSxGQ9tZ9RqO7CZejE3jJ-7K53aAjDCbiHJ3FvDLzuP2BIVxwozC/exec";
 
+    // ESTADOS GLOBAIS DA APLICAÇÃO
+    var dadosLiderLogado = null;
+    var listaCidadesIBGE = [];
+    var bairrosCidadeAtiva = [];
+    var cidadeAtivaMemoria = '';
+    var sincronizandoFila = false;
+    var jsonpContador = 0;
+    var deferredPrompt = null;
+    var appJaInstalado = false;
+    var itensEmTransmissao = {};
+
     // IDENTIFICADOR ÚNICO DE DISPOSITIVO (SEGURANÇA E AUTO-CADASTRO)
     function obterOuCriarDeviceId() {
       var devId = localStorage.getItem('campanha_device_id');
@@ -1556,7 +1567,7 @@
       verificarInstalacaoELGPDInicial();
 
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=9').then(function(reg) {
+        navigator.serviceWorker.register('./sw.js?v=16').then(function(reg) {
           reg.update();
         }).catch(function() {});
         navigator.serviceWorker.getRegistrations().then(function(regs) {
@@ -1588,9 +1599,7 @@
       }
     };
 
-    document.addEventListener('DOMContentLoaded', function() {
-      verificarInstalacaoELGPDInicial();
-    });
+    // Inicialização unificada executada apenas no window.onload
   </script>
 </body>
 </html>

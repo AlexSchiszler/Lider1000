@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lider1000-v18-live';
+const CACHE_NAME = 'lider1000-v19-live';
 const ASSETS = [
   './',
   './index.html',

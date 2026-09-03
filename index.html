@@ -981,7 +981,14 @@
       }, function(res) {
         setLoadingLogin(false);
 
-        if (res.bloqueadoDispositivo) {
+        if (res.bloqueado || res.bloqueadoDispositivo) {
+          // Destroi qualquer sessão e cache local para impedir insistência
+          localStorage.removeItem('campanha_lider_tel');
+          localStorage.removeItem('campanha_perfil_lider_' + telDigitado);
+          dadosLiderLogado = null;
+          document.getElementById('secaoPainelLider').style.display = 'none';
+          document.getElementById('secaoPrimeiroCadastro').style.display = 'none';
+          document.getElementById('secaoLogin').style.display = 'block';
           mostrarErro(res.mensagem);
           return;
         }

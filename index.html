@@ -609,7 +609,7 @@
           if (script.parentNode) script.parentNode.removeChild(script);
           if (callbackErro) callbackErro(new Error("Tempo limite de conexão excedido."));
         }
-      }, 10000);
+      }, 25000);
 
       window[callbackNome] = function(resposta) {
         clearTimeout(timerLimite);

@@ -600,13 +600,21 @@
       }
     }
 
-    function abrirModalLGPDObrigatorio() {
+        function abrirModalLGPDObrigatorio() {
       var xBtn = document.getElementById('modalBtnFecharX');
       var footObr = document.getElementById('modalFooterObrigatorio');
       var footCons = document.getElementById('modalFooterConsulta');
       if (xBtn) xBtn.style.display = 'none';
       if (footObr) footObr.style.display = 'block';
       if (footCons) footCons.style.display = 'none';
+
+      // Regra 3: Se é nova instalação/novo acesso, garante que o botão está habilitado
+      var btn = document.getElementById('btnAceitarLGPD');
+      if (btn) {
+        btn.disabled = false;
+        btn.className = 'btn btn-success w-100 py-3 fw-bold shadow-sm';
+        btn.innerHTML = '<i class="bi bi-check2-circle me-2 fs-5"></i> Li e Concordo';
+      }
 
       var modalPrivEl = document.getElementById('modalPrivacidade');
       if (modalPrivEl) {
@@ -619,6 +627,7 @@
     }
 
     function aceitarTermosLGPD() {
+      // Regra 2: Desabilita o botão após o aceite
       localStorage.setItem('campanha_termos_gerais_aceitos', 'true');
       var btn = document.getElementById('btnAceitarLGPD');
       if (btn) {
@@ -627,13 +636,19 @@
         btn.innerHTML = '<i class="bi bi-check-all me-2"></i> Termos Aceitos!';
       }
 
+      // Regra 1: Fecha a janela e libera imediatamente o painel de login
       setTimeout(function() {
         var modalEl = document.getElementById('modalPrivacidade');
         if (modalEl) {
           var modal = bootstrap.Modal.getInstance(modalEl);
           if (modal) modal.hide();
         }
-      }, 400);
+        // Foca no campo de telefone para acesso imediato
+        var telInput = document.getElementById('login_telefone');
+        if (telInput) {
+          telInput.focus();
+        }
+      }, 350);
     }
 
     function abrirModalPrivacidadeConsulta() {
@@ -648,6 +663,22 @@
         if (footObr) footObr.style.display = 'none';
         if (footCons) footCons.style.display = 'flex';
       } else {
+        if (footObr) footObr.style.display = 'block';
+        if (footCons) footCons.style.display = 'none';
+        var btn = document.getElementById('btnAceitarLGPD');
+        if (btn) {
+          btn.disabled = false;
+          btn.className = 'btn btn-success w-100 py-3 fw-bold shadow-sm';
+          btn.innerHTML = '<i class="bi bi-check2-circle me-2 fs-5"></i> Li e Concordo';
+        }
+      }
+      
+      var modalEl = document.getElementById('modalPrivacidade');
+      if (modalEl) {
+        var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+      }
+    } else {
         if (footObr) footObr.style.display = 'block';
         if (footCons) footCons.style.display = 'none';
       }
